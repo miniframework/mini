@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mini>
+	<title>application</title>
+	<domain>domain.com</domain>
+	<db>
+		<driver>mysqli</driver>
+		<master name="master">
+			<host>127.0.0.1</host>
+			<user>root</user>
+			<pass></pass>
+			<port>3306</port>
+			<dbname>test</dbname>
+			<charset>utf8</charset>
+		</master>
+		<slave name="slave1" extends="a">
+			<host>127.0.0.1</host>
+			<user>root</user>
+			<pass></pass>
+			<port>3306</port>
+			<dbname>test</dbname>
+			<charset>utf8</charset>
+			<percent>40</percent>
+		</slave>
+		<slave name="slave2">
+			<host>127.0.0.1</host>
+			<user>root</user>
+			<pass></pass>
+			<port>3306</port>
+			<dbname>test</dbname>
+			<charset>utf8</charset>
+			<percent>60</percent>
+		</slave>
+	</db>
+	<autoload>
+		<file>config/~autoload.php</file>
+		<dirs>models</dirs>
+	</autoload>
+	
+	<router>
+		<rule>
+			<app>admin</app>
+			<class>mini_web_urlrule</class>
+			
+		</rule>
+	</router>
+	
+	<default>
+		<app>admin</app>
+		<controller>index</controller>
+		<action>test</action>
+	</default>
+	<error>
+		<app>error</app>
+		<controller>index</controller>
+		<action>404</action>
+	</error>
+	
+	<debug>
+		<user>0</user>
+		<error>1</error>
+		<sql>2</sql>
+	</debug>
+</mini>

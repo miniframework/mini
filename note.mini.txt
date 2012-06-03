@@ -1,0 +1,82 @@
+mini code note
+@auther@ 		    inhell
+
+@data@				2012-6-1
+					init miniFramework
+					
+					
+@data@				2012-6-2
+@title@				add model auto save
+@descript@			
+					1.model  autoSave=true  
+					if model update,insert,delete, do not call save(), because request end, model auto flush to db
+					but must add version columns in table.
+					
+					2.model  autoSave=false
+					if model update,insert, delete must call save() flush to db
+					
+				    3.model  autoIncrement=true
+				    table primarykey columns must autoincrement. 
+				    waring:
+				    	autoIncrement=true && autoSave=false 
+				    if model->create() must immediately call save(), because model call __get() must  primaykey extist.
+				    
+				    4.model autoIncrement=false
+				    model primayKey = getGeneratorId(),  that generator globally unique id. from table idgenerator
+				    or Override getGeneratorId method.
+				    
+					5.model delete()
+					model not call __get __set and create function
+					
+
+@date@				2012-6-3
+@title@				add model version controlle.
+@descript@			
+									  1 request
+									
+					mem-----------------unitofwork-------------------db
+					|					  |                          |
+					|<------fetch---------|<--cache------------------|
+					|					  |
+					|---insert--update--->|	
+					|					  |
+					|					  |	
+					|					  |
+					|					  |----------save----------->|
+					
+					
+				    why we add version controller? because the same time, client will send many request, 
+				    so  client will operation db insert,update. but when request end , unitofwork will flush
+				    all change to db. other request will write override or read dirty data from db. 
+				    ((
+					    mem version <- db version 
+					    if update 
+					    	 mem version = mem verson + 1  
+					    if mem version <= db version 
+					    	error   －> throw Exception （Optimistic Offline Lock）
+					    else 
+					    	succes 
+				    ))
+				    	
+@date@				2012-6-4
+@title@				add event class
+@descript@			
+					add /events  dir, config.xml <event></event> 
+					
+					if config <evnet><e>login</e></evnet>will auto add events list
+					
+					onbeforeApp()，onbeforeController(),onbeforeAction()
+					onendApp(), onendController(), onbeforeAction()	
+					
+					if user implementation	that function  in xxxEvent class, will be call before dispatch app,
+					controller, action.  
+					
+					
+					
+					
+					
+					
+					
+					
+					
+		
