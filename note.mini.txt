@@ -70,13 +70,7 @@ mini code note
 					
 					if user implementation	that function  in xxxEvent class, will be call before dispatch app,
 					controller, action.  
-					
-					
-					
-					
-					
-					
-					
+										
 					
 					
 		
