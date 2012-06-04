@@ -18,6 +18,7 @@ class mini_web_controller extends mini_base_component
     public $data = array();
     public $config = null;
     public $event = null;
+    public $logger = null;
     public function run($action)
     {
         $this->event->onbeforeAction(array("app"=>$this->app,"controller"=>$this->controller, "action"=>$this->action));
@@ -31,6 +32,7 @@ class mini_web_controller extends mini_base_component
     
     public function init()
     {
+        $this->logger = mini_base_application::app()->getLogger();
         $this->route = mini_base_application::app()->getUrlManager();
         $this->request = mini_base_application::app()->getRequest();
         $this->response = mini_base_application::app()->getResponse();

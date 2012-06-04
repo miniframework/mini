@@ -15,14 +15,24 @@ class mini_base_application
     private $homePath = "";
     private $partialPath = "";
     private $config = null;
+    private $logger = null;
     private function __construct()
     {
         $this->id = sprintf('%x' ,crc32($this->name . time()));
+        $this->initLogger();
         $this->initConfig();
         $this->initPath();
         $this->initEvent();
+        
     }
-    
+    private function initLogger()
+    {
+        $this->logger = mini::getLogger();
+    }
+    public function getLogger()
+    {
+        return $this->logger;
+    }
     private function initConfig()
     {
         $this->config = mini::getConfig();

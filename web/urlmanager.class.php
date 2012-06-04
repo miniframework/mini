@@ -26,7 +26,7 @@ class mini_web_urlmanager extends mini_base_component
     public function addRules($rule, $append = true)
     {
         $rule['class'] = mini_base_application::app()->getComponent($rule['class']);
-        if($rule['class'] instanceof mini_web_baserule) {
+        if($rule['class'] instanceof mini_base_rule) {
             if(!array_key_exists($rule['app'], $this->rules))
             {
 	            if($append) {

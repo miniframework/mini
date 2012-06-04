@@ -71,6 +71,17 @@ mini code note
 					if user implementation	that function  in xxxEvent class, will be call before dispatch app,
 					controller, action.  
 										
-					
-					
+@data@				2012-6-5
+@title@				add log class
+@descript@
+					add config.xml 
+					<logger>
+						<log name="mylog">
+							<class>mini_log_file</class>
+							<levels>info,warning</levels>
+							<categories>app</categories>
+							<file>mylog.log</file>
+						</log>
+					</logger>					
+					will call mini_log_file find levels info,warngin log  categories to mylog.log file
 		

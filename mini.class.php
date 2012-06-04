@@ -19,9 +19,28 @@ class mini
      * @param string $home            
      */
     private static $config = null;
+    private static $runPath = '';
     private function __construct($home)
     {
         $this->home = realpath($home);
+        self::$runPath = $this->home;
+        $this->initHandle();
+    }
+    private function initHandle()
+    {
+        set_exception_handler(array($this,'handleException'));
+    }
+    public function handleException($exception)
+    {
+        restore_error_handler();
+        restore_exception_handler();
+        $message=$exception->__toString();
+        if(isset($_SERVER['REQUEST_URI']))
+        	$message.="\nREQUEST_URI=".$_SERVER['REQUEST_URI'];
+        if(isset($_SERVER['HTTP_REFERER']))
+        	$message.="\nHTTP_REFERER=".$_SERVER['HTTP_REFERER'];
+        $message.="\n---";
+        echo $message;
     }
     /**
      * get mini handle
@@ -43,12 +62,17 @@ class mini
         $console = self::createComponent("mini_cli_console");
         try {
         $console->run();
+        
         } catch(Exception $e)
         {
             echo $e->getMessage()."\r\n";
         }
     }
-    
+   
+    public static function getLogger()
+    {
+        return  mini_log_logger::getHandle();
+    }
     /**
      * start load user config create ~autoload file, registry global vars
      *
@@ -94,6 +118,11 @@ class mini
     public function web()
     {
         mini_base_application::app()->process();
+        self::getLogger()->flush();
+    }
+    public static function getRunPath()
+    {
+        return self::$runPath;
     }
     public static function getConfig()
     {

@@ -1,5 +1,5 @@
 <?php
-class mini_web_urlrule extends mini_base_component implements mini_web_baserule
+class mini_web_urlrule extends mini_base_component implements mini_base_rule
 {
     public function init(){}
     public function parseUrl($urlmanager, $request, $app)
