@@ -24,14 +24,23 @@ class mini
     {
         $this->home = realpath($home);
         self::$runPath = $this->home;
+        $this->initLoader();
         $this->initHandle();
+    }
+    private function initLoader()
+    {
+        // autoload mini class
+        include_once realpath(dirname(__FILE__) . "/boot/loader.class.php");
+        mini_boot_loader::getHandle()->loader();
     }
     private function initHandle()
     {
         set_exception_handler(array($this,'handleException'));
+        set_error_handler(array($this,'handleError'),error_reporting());
     }
     public function handleException($exception)
     {
+        $category='exception.'.get_class($exception);
         restore_error_handler();
         restore_exception_handler();
         $message=$exception->__toString();
@@ -40,7 +49,84 @@ class mini
         if(isset($_SERVER['HTTP_REFERER']))
         	$message.="\nHTTP_REFERER=".$_SERVER['HTTP_REFERER'];
         $message.="\n---";
-        echo $message;
+        self::getLogger()->log($message, mini_log_logger::LEVEL_ERROR, $category);
+        $this->displayException($exception);
+        $this->end();
+        
+       
+    }
+    public function displayException($exception)
+    {
+    		echo '<h1>'.get_class($exception)."</h1>\n";
+    		echo '<p>'.$exception->getMessage().' ('.$exception->getFile().':'.$exception->getLine().')</p>';
+    		echo '<pre>'.$exception->getTraceAsString().'</pre>';
+    }
+    public function handleError($code,$message,$file,$line)
+    {
+    	if($code & error_reporting())
+    	{
+    		// disable error capturing to avoid recursive errors
+    		restore_error_handler();
+    		restore_exception_handler();
+    
+    		$log="$message ($file:$line)\nStack trace:\n";
+    		$trace=debug_backtrace();
+    		// skip the first 3 stacks as they do not tell the error position
+    		if(count($trace)>3)
+    			$trace=array_slice($trace,3);
+    		foreach($trace as $i=>$t)
+    		{
+    			if(!isset($t['file']))
+    				$t['file']='unknown';
+    			if(!isset($t['line']))
+    				$t['line']=0;
+    			if(!isset($t['function']))
+    				$t['function']='unknown';
+    			$log.="#$i {$t['file']}({$t['line']}): ";
+    			if(isset($t['object']) && is_object($t['object']))
+    				$log.=get_class($t['object']).'->';
+    			$log.="{$t['function']}()\n";
+    		}
+    		if(isset($_SERVER['REQUEST_URI']))
+    			$log.='REQUEST_URI='.$_SERVER['REQUEST_URI'];
+    		self::getLogger()->log($log, mini_log_logger::LEVEL_ERROR, 'php');
+          
+            $this-> displayError($code,$message,$file,$line);
+            $this->end();
+    	}
+    }
+    public function displayError($code,$message,$file,$line)
+	{
+		
+			echo "<h1>PHP Error [$code]</h1>\n";
+			echo "<p>$message ($file:$line)</p>\n";
+			echo '<pre>';
+
+			$trace=debug_backtrace();
+			// skip the first 3 stacks as they do not tell the error position
+			if(count($trace)>3)
+				$trace=array_slice($trace,3);
+			foreach($trace as $i=>$t)
+			{
+				if(!isset($t['file']))
+					$t['file']='unknown';
+				if(!isset($t['line']))
+					$t['line']=0;
+				if(!isset($t['function']))
+					$t['function']='unknown';
+				echo "#$i {$t['file']}({$t['line']}): ";
+				if(isset($t['object']) && is_object($t['object']))
+					echo get_class($t['object']).'->';
+				echo "{$t['function']}()\n";
+			}
+
+			echo '</pre>';
+		
+	}
+    public function end()
+    {
+        
+        self::getLogger()->flush();
     }
     /**
      * get mini handle
@@ -65,7 +151,8 @@ class mini
         
         } catch(Exception $e)
         {
-            echo $e->getMessage()."\r\n";
+            self::getLogger()->log($message, 'cli', 'console')
+            ->flush();
         }
     }
    
@@ -81,9 +168,6 @@ class mini
      */
     public function boot($path)
     {
-        // autoload mini class
-        include_once realpath(dirname(__FILE__) . "/boot/loader.class.php");
-        mini_boot_loader::getHandle()->loader();
         
         // add user config
         $config = mini_boot_config::getHandle($path);
@@ -118,7 +202,7 @@ class mini
     public function web()
     {
         mini_base_application::app()->process();
-        self::getLogger()->flush();
+        $this->end();
     }
     public static function getRunPath()
     {

@@ -69,6 +69,7 @@ class mini_log_logger
     		$this->flush();
     		$this->processing=false;
     	}
+    	return $this;
     }
     public function getLogs($levels='',$categories='')
     {

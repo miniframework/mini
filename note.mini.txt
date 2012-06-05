@@ -1,34 +1,44 @@
 mini code note
 @auther@ 		    inhell
 
-@data@				2012-6-1
-					init miniFramework
-					
-					
-@data@				2012-6-2
-@title@				add model auto save
-@descript@			
-					1.model  autoSave=true  
-					if model update,insert,delete, do not call save(), because request end, model auto flush to db
-					but must add version columns in table.
-					
-					2.model  autoSave=false
-					if model update,insert, delete must call save() flush to db
-					
-				    3.model  autoIncrement=true
-				    table primarykey columns must autoincrement. 
-				    waring:
-				    	autoIncrement=true && autoSave=false 
-				    if model->create() must immediately call save(), because model call __get() must  primaykey extist.
-				    
-				    4.model autoIncrement=false
-				    model primayKey = getGeneratorId(),  that generator globally unique id. from table idgenerator
-				    or Override getGeneratorId method.
-				    
-					5.model delete()
-					model not call __get __set and create function
-					
 
+
+@data@				2012-6-5
+@title@				add error and eception handle
+						
+						
+										
+@data@				2012-6-5
+@title@				add log class
+@descript@
+					add config.xml 
+					<logger>
+						<log name="mylog">
+							<class>mini_log_file</class>
+							<levels>info,warning</levels>
+							<categories>app</categories>
+							<file>mylog.log</file>
+						</log>
+					</logger>					
+					will call mini_log_file find levels info,warngin log  categories to mylog.log file
+				    
+				    
+				    	
+@date@				2012-6-4
+@title@				add event class
+@descript@			
+					add /events  dir, config.xml <event></event> 
+					
+					if config <evnet><e>login</e></evnet>will auto add events list
+					
+					onbeforeApp()，onbeforeController(),onbeforeAction()
+					onendApp(), onendController(), onbeforeAction()	
+					
+					if user implementation	that function  in xxxEvent class, will be call before dispatch app,
+					controller, action. 
+				
+					
+					
 @date@				2012-6-3
 @title@				add model version controlle.
 @descript@			
@@ -56,32 +66,34 @@ mini code note
 					    	error   －> throw Exception （Optimistic Offline Lock）
 					    else 
 					    	succes 
-				    ))
-				    	
-@date@				2012-6-4
-@title@				add event class
+				    )) 
+				    
+				    
+					
+@data@				2012-6-2
+@title@				add model auto save
 @descript@			
-					add /events  dir, config.xml <event></event> 
+					1.model  autoSave=true  
+					if model update,insert,delete, do not call save(), because request end, model auto flush to db
+					but must add version columns in table.
 					
-					if config <evnet><e>login</e></evnet>will auto add events list
+					2.model  autoSave=false
+					if model update,insert, delete must call save() flush to db
 					
-					onbeforeApp()，onbeforeController(),onbeforeAction()
-					onendApp(), onendController(), onbeforeAction()	
+				    3.model  autoIncrement=true
+				    table primarykey columns must autoincrement. 
+				    waring:
+				    	autoIncrement=true && autoSave=false 
+				    if model->create() must immediately call save(), because model call __get() must  primaykey extist.
+				    
+				    4.model autoIncrement=false
+				    model primayKey = getGeneratorId(),  that generator globally unique id. from table idgenerator
+				    or Override getGeneratorId method.
+				    
+					5.model delete()
+					model not call __get __set and create function
 					
-					if user implementation	that function  in xxxEvent class, will be call before dispatch app,
-					controller, action.  
-										
-@data@				2012-6-5
-@title@				add log class
-@descript@
-					add config.xml 
-					<logger>
-						<log name="mylog">
-							<class>mini_log_file</class>
-							<levels>info,warning</levels>
-							<categories>app</categories>
-							<file>mylog.log</file>
-						</log>
-					</logger>					
-					will call mini_log_file find levels info,warngin log  categories to mylog.log file
-		
+			
+					
+@data@				2012-6-1
+@title@				init miniFramework
