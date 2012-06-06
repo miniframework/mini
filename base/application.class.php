@@ -23,7 +23,6 @@ class mini_base_application
         $this->initConfig();
         $this->initPath();
         $this->initEvent();
-        
     }
     private function initLogger()
     {
@@ -119,6 +118,7 @@ class mini_base_application
     {
         $route = $this->getUrlManager()->parseUrl($this->getRequest());
         $this->run($route);
+        return $this;
     }
     public function run($route)
     {
@@ -130,6 +130,11 @@ class mini_base_application
                 throw new Exception("errorController not exitst!");
             }
         }
+        $this->getResponse()->sendResponse();
+    }
+    public function end()
+    {
+        mini::end();
     }
     public function getDispatch()
     {

@@ -39,7 +39,6 @@ class mini_web_dispatch extends mini_base_component
     public function runController($route, $type = 0, $params = array())
     {
         
-        
         if($type == self::DEFAULT_TYPE) {
             $app = $route->getApp();
             $controller = $route->getController();

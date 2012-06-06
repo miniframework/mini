@@ -294,12 +294,12 @@ class mini_struct_listiterator implements Iterator
 		return $this->index<$this->count;
 	}
 }
-$list = new mini_struct_list(array(1,2,3,4));
+// $list = new mini_struct_list(array(1,2,3,4));
 
-$list->add("55");
-$list->remove("55");
-$list->insert(2, "ttt");
-foreach($list as $k => $v)
-{
-    echo $v;
-}
+// $list->add("55");
+// $list->remove("55");
+// $list->insert(2, "ttt");
+// foreach($list as $k => $v)
+// {
+//     echo $v;
+// }

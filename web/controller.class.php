@@ -25,8 +25,9 @@ class mini_web_controller extends mini_base_component
         $this->$action();
         $this->event->onendAction(array("app"=>$this->app,"controller"=>$this->controller, "action"=>$this->action));
         $this->event->onautoSave(array("app"=>$this->app,"controller"=>$this->controller, "action"=>$this->action));
-        if(! $this->cancelRender) {
-            $this->render();
+        if(! $this->cancelRender && !$this->response->isRedirect()) {
+            $view = $this->render();
+            $this->response->appendBody($view);
         }
     }
     
@@ -56,9 +57,10 @@ class mini_web_controller extends mini_base_component
         $viewPath = $basePath . "/" . $this->app . "/" . $this->controller;
         return $viewPath;
     }
-    public function render($viewName = "", $return = false)
+    public function render($viewName = "", $return = true)
     {
         $this->closeRender();
+        if($this->parentId) $return = false;
         return $this->view->render($viewName, $this->action, $this->getViewPath(), $return);
     }
     public function setControllerMap($oapp, $ocontroller, $oaction, $app, $controller, $action)
@@ -81,6 +83,12 @@ class mini_web_controller extends mini_base_component
     public function model($class)
     {
         return mini_db_model::model($class);
+    }
+    public function jump($url)
+    {
+        $this->event->onautoSave(array("app"=>$this->app,"controller"=>$this->controller, "action"=>$this->action));
+        header("Location: ".$url);
+        mini_base_application::app()->end();
     }
    
 }

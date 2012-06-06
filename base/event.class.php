@@ -36,7 +36,6 @@ class mini_base_event extends mini_base_component
               }
           }
       }
-      
      
     }
     public function __call($name,$args)

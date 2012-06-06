@@ -51,7 +51,7 @@ class mini
         $message.="\n---";
         self::getLogger()->log($message, mini_log_logger::LEVEL_ERROR, $category);
         $this->displayException($exception);
-        $this->end();
+        self::end();
         
        
     }
@@ -91,8 +91,8 @@ class mini
     			$log.='REQUEST_URI='.$_SERVER['REQUEST_URI'];
     		self::getLogger()->log($log, mini_log_logger::LEVEL_ERROR, 'php');
           
-            $this-> displayError($code,$message,$file,$line);
-            $this->end();
+            $this->displayError($code,$message,$file,$line);
+            self::end();
     	}
     }
     public function displayError($code,$message,$file,$line)
@@ -123,10 +123,11 @@ class mini
 			echo '</pre>';
 		
 	}
-    public function end()
+    public static function end()
     {
         
         self::getLogger()->flush();
+        exit;
     }
     /**
      * get mini handle
@@ -201,8 +202,7 @@ class mini
      */
     public function web()
     {
-        mini_base_application::app()->process();
-        $this->end();
+        mini_base_application::app()->process()->end();
     }
     public static function getRunPath()
     {

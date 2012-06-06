@@ -1,7 +1,14 @@
 mini code note
 @auther@ 		    inhell
 
-
+@data@				2012-6-6
+@title@				add response , set view to response
+@descript@			
+					add function response->setBody(view = render(isreturn = true))
+					application call response->sendResponse() send header and output body
+					isreturn = true not echo ,because  header before not output.
+					but if view->controller() so,parentId != null set isreturn = false.
+					add mini end() function, and controller->jump call event autosave, and mini end()
 
 @data@				2012-6-5
 @title@				add error and eception handle
