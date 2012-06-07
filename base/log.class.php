@@ -15,11 +15,7 @@ class mini_base_log extends mini_base_component
         }
         $this->logParams($config);
     }
-    public function init()
-    {
-        
-      
-    }
+    public function init(){}
     public function processLogs($logger)
     {
         $logs = $logger->getLogs($this->levels,$this->categories);

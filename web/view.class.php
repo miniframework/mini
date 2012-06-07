@@ -106,7 +106,6 @@ class mini_web_view extends mini_base_component
             throw new Exception("controller not same parent!");
         }
         $class = $dispatch->runController($route, mini_web_dispatch::CONTROLLER_TYPE, $params);
-        
         if($class == null) {
             throw new Exception("$controller not exitst!");
         }

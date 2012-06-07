@@ -1,6 +1,16 @@
 mini code note
 @auther@ 		    inhell
 
+
+
+@data@				2012-6-7
+@title@				add mini define variable 
+@descript@
+					MINI_PATH 
+					MINI_EXCEPTION_HANDLER
+					MINI_ERROR_HANDLER
+					MINI_DEBUG
+
 @data@				2012-6-6
 @title@				add response , set view to response
 @descript@			
@@ -49,7 +59,7 @@ mini code note
 @date@				2012-6-3
 @title@				add model version controlle.
 @descript@			
-									  1 request
+									  one request
 									
 					mem-----------------unitofwork-------------------db
 					|					  |                          |

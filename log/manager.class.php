@@ -16,11 +16,11 @@ class mini_log_manager
          
         if(!empty($logger))
         {
-            if(!isset($logger['log'][0]) || !is_array($logger['log'][0]))
+            if(!isset($logger['logs'][0]) || !is_array($logger['logs'][0]))
             {
-                $logger['log'] = array($logger['log']);
+                $logger['logs'] = array($logger['logs']);
             }
-            foreach($logger['log'] as $log)
+            foreach($logger['logs'] as $log)
             {
                 if(!class_exists($log['class']));
                 {

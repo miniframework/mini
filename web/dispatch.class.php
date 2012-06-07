@@ -71,7 +71,7 @@ class mini_web_dispatch extends mini_base_component
         if(! file_exists($appPath . "/" . $app)) {
             return null;
         }
-        $event = mini_base_application::app()->getEvents();
+        $event = mini_base_application::app()->getEvent();
         $event->onbeginApp(array('app'=>$app));
         
         
@@ -91,26 +91,31 @@ class mini_web_dispatch extends mini_base_component
         
         
         $class = new $className();
+       // $class =  mini_base_application::app()->getComponent($className);
         $actionName = "do" . ucfirst($action);
         if(! method_exists($class, $actionName)) {
             return null;
         }
         
-       
+        $class->init();
         
         
+       $map = array("oapp"=>$route->getApp(),
+               "ocontroller"=>$route->getController(),
+               "oaction"=>$route->getAction(),
+               "app"=>$app,
+               "controller"=>$controller,
+               "action"=>$action);
        
-        $class->setControllerMap(  $route->getApp(), 
-					        $route->getController(), 
-					        $route->getAction(), 
-					        $app, 
-					        $controller, 
-					        $action);
+        $class->setControllerMap($map);
 	
 		$class->setParentId($this->controllerId);
-        $class->setParams($params);
 		$this->controllerId = $app.$controller.$action;
-        $class->init();
+		
+		
+        $class->setParams($params);
+		
+       
         $class->run($actionName);
         $event->onendController(array('app'=>$app,'controller'=>$controller));
         $event->onendApp(array('app'=>$app));

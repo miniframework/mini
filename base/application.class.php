@@ -12,17 +12,19 @@ class mini_base_application
     private $layoutPath = "";
     private $viewPath = "";
     private $appPath = "";
-    private $homePath = "";
+    private $runPath = "";
     private $partialPath = "";
     private $config = null;
     private $logger = null;
     private function __construct()
     {
+        
+        if(mini::$handle == null) throw new Exception("must init mini!");
         $this->id = sprintf('%x' ,crc32($this->name . time()));
         $this->initLogger();
         $this->initConfig();
         $this->initPath();
-        $this->initEvent();
+        
     }
     private function initLogger()
     {
@@ -46,7 +48,7 @@ class mini_base_application
     }
     private function initPath()
     {
-        $this->setHomePath();
+        $this->setRunPath();
         $this->setViewpath();
         $this->setAppPath();
         $this->setLayoutPath();
@@ -55,7 +57,7 @@ class mini_base_application
     public function setLayoutPath($layoutPath = null)
     {
         if($layoutPath == null) {
-            $this->layoutPath = $this->homePath . "/" . $this->layouthome;
+            $this->layoutPath = $this->runPath . "/" . $this->layouthome;
         } else {
             $this->layoutPath = $layoutPath;
         }
@@ -63,7 +65,7 @@ class mini_base_application
     public function setPartialPath($partialPath = null)
     {
         if($partialPath == null) {
-            $this->partialPath = $this->homePath . "/" . $this->partialhome;
+            $this->partialPath = $this->runPath . "/" . $this->partialhome;
         } else {
             $this->partialPath = $partialPath;
         }
@@ -76,9 +78,13 @@ class mini_base_application
     {
         return $this->layoutPath;
     }
-    public function setHomePath()
+    public function getRunPath()
     {
-        $this->homePath = $this->config->home;
+        return $this->runPath;
+    }
+    public function setRunPath()
+    {
+        $this->runPath = mini::getRunPath();
     }
     public function getAppHome()
     {
@@ -87,7 +93,7 @@ class mini_base_application
     public function setAppPath($appPath = null)
     {
         if($appPath == null) {
-            $this->appPath = $this->homePath . "/" . $this->apphome;
+            $this->appPath = $this->runPath . "/" . $this->apphome;
         } else {
             $this->appPath = $appPath;
         }
@@ -95,7 +101,7 @@ class mini_base_application
     public function setViewPath($viewPath = null)
     {
         if($viewPath == null) {
-            $this->viewPath = $this->homePath . "/" . $this->viewhome;
+            $this->viewPath = $this->runPath . "/" . $this->viewhome;
         } else {
             $this->viewPath = $viewPath;
         }
@@ -144,9 +150,9 @@ class mini_base_application
     {
         return $this->getComponent("mini_http_request");
     }
-    public function getEvents()
+    public function getEvent()
     {
-        return $this->getComponent("mini_base_event");
+        return mini::getEvent();
     }
     public function getUrlManager()
     {

@@ -20,8 +20,8 @@ class mini_boot_loader
      */
     private function __construct()
     {
-        $mini_path = dirname(__FILE__) . "/../../";
-        $this->namespace['mini'] = $mini_path;
+//         $mini_path = dirname(__FILE__) . "/../../";
+//         $this->namespace['mini'] = $mini_path;
     }
     /**
      * get mini_boot_loader 
@@ -49,9 +49,17 @@ class mini_boot_loader
      * register callback getClass
      *
      */
-    public function loader()
+    public function loader($path, $namespace='mini')
     {
+        $this->namespace[$namespace] = $path;
         spl_autoload_register(array($this, "getClass"));
+        return $this;
+    }
+    public function register($callback)
+    {
+        spl_autoload_unregister(array($this, "getClass"));
+        spl_autoload_register($callback);
+        spl_autoload_register(array($this,'getClass'));
     }
     /**
      * spl_autoload_register callback function
@@ -61,13 +69,27 @@ class mini_boot_loader
      */
     private function getClass($classname)
     {
-        $classname_arr = explode("_", $classname);
-        if(array_key_exists($classname_arr[0], $this->namespace)) {
-            $classfile = $this->getClassfile($classname_arr);
-            if(file_exists($this->namespace['mini'] . $classfile)) {
-                include_once $this->namespace['mini'] . $classfile;
+      
+        
+       if(!class_exists($classname))
+       {
+            $classname_arr = explode("_", $classname);
+            
+            if(array_key_exists($classname_arr[0], $this->namespace)) {
+                $classfile = $this->getClassfile($classname_arr);
+                if(file_exists($this->namespace['mini'] . '/'.$classfile)) {
+                    include_once $this->namespace['mini'] . '/'. $classfile;
+                }
+                else
+                {
+                    throw new Exception("file not find!");
+                }
             }
-        }
+            else
+            {
+                throw new Exception("class not in namespace!");
+            }
+       }
     
     }
     /**
@@ -84,7 +106,7 @@ class mini_boot_loader
             return $classname_arr[0] . ".class.php";
         } else {
 	    $classfile = '';
-            for($i = 0; $i < $count - 1; $i ++) {
+            for($i = 1; $i < $count - 1; $i ++) {
                 $classfile .= $classname_arr[$i] . "/";
             }
             $classfile .= $classname_arr[$count - 1] . ".class.php";

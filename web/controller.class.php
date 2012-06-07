@@ -22,6 +22,7 @@ class mini_web_controller extends mini_base_component
     public function run($action)
     {
         $this->event->onbeforeAction(array("app"=>$this->app,"controller"=>$this->controller, "action"=>$this->action));
+        $this->doInit();
         $this->$action();
         $this->event->onendAction(array("app"=>$this->app,"controller"=>$this->controller, "action"=>$this->action));
         $this->event->onautoSave(array("app"=>$this->app,"controller"=>$this->controller, "action"=>$this->action));
@@ -33,15 +34,19 @@ class mini_web_controller extends mini_base_component
     
     public function init()
     {
-        $this->logger = mini_base_application::app()->getLogger();
+       
         $this->route = mini_base_application::app()->getUrlManager();
         $this->request = mini_base_application::app()->getRequest();
         $this->response = mini_base_application::app()->getResponse();
-        $this->event = mini_base_application::app()->getEvents();
-        $this->view = mini::createComponent("mini_web_view");
-        $this->id = $this->app.$this->controller.$this->action;
-        $this->openRender();
         $this->config = mini_base_application::app()->getConfig();
+        $this->logger = mini_base_application::app()->getLogger();
+        $this->event = mini_base_application::app()->getEvent();
+        $this->view = mini::createComponent("mini_web_view");
+        $this->openRender();
+    }
+    public function doInit()
+    {
+        
     }
     public function closeRender()
     {
@@ -63,14 +68,15 @@ class mini_web_controller extends mini_base_component
         if($this->parentId) $return = false;
         return $this->view->render($viewName, $this->action, $this->getViewPath(), $return);
     }
-    public function setControllerMap($oapp, $ocontroller, $oaction, $app, $controller, $action)
+    public function setControllerMap($map)
     {
-        $this->oapp = $oapp;
-        $this->ocontroller = $ocontroller;
-        $this->oaction = $oaction;
-        $this->app = $app;
-        $this->controller = $controller;
-        $this->action = $action;
+        $this->oapp = $map['oapp'];
+        $this->ocontroller = $map['ocontroller'];
+        $this->oaction = $map['oaction'];
+        $this->app = $map['app'];
+        $this->controller = $map['controller'];
+        $this->action = $map['action'];
+        $this->id = $this->app.$this->controller.$this->action;
     }
     public function setParams($params = array())
     {

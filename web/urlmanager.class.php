@@ -14,14 +14,14 @@ class mini_web_urlmanager extends mini_base_component
     public function process()
     {
         $router = mini_base_application::app()->getConfig()->router;
-        if(!array_key_exists('class', $router['rule']))
+        if(!array_key_exists('class', $router['rules']))
         {
-	        foreach ( $router['rule'] as $k => $rule ) {
+	        foreach ( $router['rules'] as $k => $rule ) {
 	            $this->addRules($rule);
 	        }
         }
 	    else 
-            $this->addRules($router['rule']);
+            $this->addRules($router['rules']);
     }
     public function addRules($rule, $append = true)
     {

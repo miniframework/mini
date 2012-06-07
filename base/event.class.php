@@ -1,10 +1,10 @@
 <?php
-class mini_base_event extends mini_base_component
+class mini_base_event
 {
     
     private $e = null;
     private $dir = "events";
-    public function init()
+    public function __construct()
     {
         $this->e = new mini_struct_list();
         $this->getEvents();
@@ -15,9 +15,9 @@ class mini_base_event extends mini_base_component
     }
     public function getEvents()
     {
-      $config =  mini::getConfig();
-      $home = $config->home;
-      $eventPath = $home."/".$this->dir;
+      $runPath = mini::getRunPath();
+      $config = mini::getConfig();
+      $eventPath = $runPath."/".$this->dir;
       $e = $config->event['e'];
       if(!empty($e))
       {

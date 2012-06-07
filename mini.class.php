@@ -1,4 +1,8 @@
 <?php
+defined('MINI_PATH') || define('MINI_PATH',dirname(__FILE__));
+defined('MINI_EXCEPTION_HANDLER') || define('MINI_EXCEPTION_HANDLER',true);
+defined('MINI_ERROR_HANDLER') || define('MINI_ERROR_HANDLER',true);
+defined('MINI_DEBUG') || define('MINI_DEBUG', false);
 class mini
 {
     /**
@@ -6,37 +10,49 @@ class mini
      *
      * @var mini
      */
-    private static $handle = null;
+    public static $handle = null;
     /**
      * project home path
      *
      * @var string
      */
-    private $home = "";
     /**
      * set home path
      *
      * @param string $home            
      */
-    private static $config = null;
+    
     private static $runPath = '';
-    private function __construct($home)
+    private static $config = null;
+    private static $loader = null;
+    private static $event = null;
+    private function __construct($runPath, $config)
     {
-        $this->home = realpath($home);
-        self::$runPath = $this->home;
-        $this->initLoader();
         $this->initHandle();
+        if(!file_exists($runPath)) throw new Exception("$runPath not exists!");
+        self::$runPath = realpath($runPath);
+        self::$loader = $this->initLoader();
+        self::$config =  $this->initConfig($config);
+        self::$event = $this->initEvent();
+       
     }
     private function initLoader()
     {
         // autoload mini class
         include_once realpath(dirname(__FILE__) . "/boot/loader.class.php");
-        mini_boot_loader::getHandle()->loader();
+        return  mini_boot_loader::getHandle()->loader(MINI_PATH);
+       
     }
     private function initHandle()
     {
-        set_exception_handler(array($this,'handleException'));
-        set_error_handler(array($this,'handleError'),error_reporting());
+        if(MINI_EXCEPTION_HANDLER)
+            set_exception_handler(array($this,'handleException'));
+        if(MINI_ERROR_HANDLER)
+            set_error_handler(array($this,'handleError'),error_reporting());
+    }
+    private function initEvent()
+    {
+        return new mini_base_event();
     }
     public function handleException($exception)
     {
@@ -49,17 +65,20 @@ class mini
         if(isset($_SERVER['HTTP_REFERER']))
         	$message.="\nHTTP_REFERER=".$_SERVER['HTTP_REFERER'];
         $message.="\n---";
-        self::getLogger()->log($message, mini_log_logger::LEVEL_ERROR, $category);
-        $this->displayException($exception);
-        self::end();
         
+        $this->displayException($exception);
+        self::getLogger()->log($message, mini_log_logger::LEVEL_ERROR, $category);
+        self::end();
        
     }
     public function displayException($exception)
     {
+        if(MINI_DEBUG)
+        {
     		echo '<h1>'.get_class($exception)."</h1>\n";
     		echo '<p>'.$exception->getMessage().' ('.$exception->getFile().':'.$exception->getLine().')</p>';
     		echo '<pre>'.$exception->getTraceAsString().'</pre>';
+        }
     }
     public function handleError($code,$message,$file,$line)
     {
@@ -89,15 +108,17 @@ class mini
     		}
     		if(isset($_SERVER['REQUEST_URI']))
     			$log.='REQUEST_URI='.$_SERVER['REQUEST_URI'];
+    		$this->displayError($code,$message,$file,$line);
     		self::getLogger()->log($log, mini_log_logger::LEVEL_ERROR, 'php');
-          
-            $this->displayError($code,$message,$file,$line);
-            self::end();
+    		self::end();
+    		
+           
     	}
     }
     public function displayError($code,$message,$file,$line)
 	{
-		
+		if(MINI_DEBUG)
+		{
 			echo "<h1>PHP Error [$code]</h1>\n";
 			echo "<p>$message ($file:$line)</p>\n";
 			echo '<pre>';
@@ -121,11 +142,11 @@ class mini
 			}
 
 			echo '</pre>';
+		}
 		
 	}
     public static function end()
     {
-        
         self::getLogger()->flush();
         exit;
     }
@@ -136,16 +157,16 @@ class mini
      *            project home path
      * @return string
      */
-    public static function run($home)
+    public static function run($runPath, $config)
     {
         if(self::$handle == null)
-            self::$handle = new self($home);
+            self::$handle = new self($runPath, $config);
         return self::$handle;
     }
     public static function console()
     {
         include_once realpath(dirname(__FILE__) . "/boot/loader.class.php");
-        mini_boot_loader::getHandle()->loader();
+        mini_boot_loader::getHandle()->loader(MINI_PATH);
         $console = self::createComponent("mini_cli_console");
         try {
         $console->run();
@@ -156,7 +177,10 @@ class mini
             ->flush();
         }
     }
-   
+    public static function getEvent()
+    {
+       return  self::$event;
+    }
     public static function getLogger()
     {
         return  mini_log_logger::getHandle();
@@ -167,35 +191,33 @@ class mini
      * @param string $path            
      * @return mini
      */
-    public function boot($path)
+    public function assembly($autofile)
     {
-        
-        // add user config
-        $config = mini_boot_config::getHandle($path);
-        // set project home path
-        $config->home = $this->home;
         // set user autoload file
-        $autoload = $config->autoload;
-        if(! file_exists($this->home . '/' . $autoload['file'])) {
-            $autodirs = $autoload['dirs'];
-            if(is_array($autodirs)) {
-                foreach($autodirs as $dir) {
-                    $dirs[] = $this->home . '/' . $dir;
-                }
-            } else if(! empty($autodirs)) {
-                $dirs[] = $this->home . '/' . $autodirs;
-            }
-            
-            $generator = new mini_tool_assembly($this->home . '/' . $autoload['file'] ,$dirs);
-            $generator->generate();
-        }
-        include_once $this->home . '/' . $autoload['file'];
-        spl_autoload_register("mini_autoload");
-        // include user autoload file
+        $loader = self::$config->loader;
+        if(! file_exists($autofile)) {
+        	$autodirs = $loader['dirs'];
+        	if(is_array($autodirs)) {
+        		foreach($autodirs as $dir) {
+        			$dirs[] = self::$runPath . '/' . $dir;
+        		}
+        	} else if(! empty($autodirs)) {
+        		$dirs[] = self::$runPath . '/' . $autodirs;
+        	}
         
-        self::$config = $config;
-        // register config
+        	$generator = new mini_tool_assembly( $autofile ,$dirs);
+        	$generator->generate();
+        }
+        if(is_readable($autofile))
+        {
+            include_once  $autofile;
+            self::$loader->register("mini_autoload");
+        }
         return $this;
+    }
+    public function initConfig($path)
+    {
+        return  mini_boot_config::getHandle($path);
     }
     /**
      * start mvc
