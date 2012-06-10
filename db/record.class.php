@@ -2,6 +2,7 @@
 class mini_db_record
 {
     public $model = null;
+    
     public function __construct($model)
     {
         if(! $model instanceof mini_db_model) {
@@ -57,7 +58,7 @@ class mini_db_record
         	mini_db_unitofwork::getHandle()->clear();
         }
     }
-    public function findByPk($pk, $select = array('*'))
+    public function findByPk($pk, $select = '*')
     {
         $mapkey = $this->model->getKey($pk);
         $unitofwork = mini_db_unitofwork::getHandle();
@@ -70,6 +71,7 @@ class mini_db_record
         } else {
             $condition = new mini_db_condition();
             $condition->select = $select;
+            $condition->compare($this->model->schema->primaryKey, '=', $pk);
             $condition->mergeWith($this->model->condition);
             $sql = $this->getCommandBuilder()->findCommand($this->model->schema ,$condition);
             $row = $this->getConnection()->find($sql);

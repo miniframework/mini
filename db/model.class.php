@@ -47,7 +47,6 @@ abstract class mini_db_model
         $this->condition = new mini_db_condition(array(
                 "select"=>implode("," ,$initSelect) 
         ));
-        
         $this->init();
     }
     public static function model($class)
@@ -85,7 +84,6 @@ abstract class mini_db_model
     }
     public function create($data = array())
     {
-       
         if($this->isDirty == true)
             throw new Exception("object Dirty!");
         $this->validcreate($data);
@@ -124,30 +122,78 @@ abstract class mini_db_model
         else if(in_array($name ,$this->columns)) {
             $condition = new mini_db_condition();
             $condition->select = $name;
-            $condition->compare($this->primaryKey ,"=" . $this->attributes[$this->primaryKey] ,true);
+            $condition->compare($this->primaryKey ,"=" ,$this->attributes[$this->primaryKey]);
             $this->record->find($condition);
             return $this->attributes[$name];
         } else {
             throw new Exception("not find $name attributes!");
         }
     }
+    public function __call($name, $argv)
+    {
+        $relations = $this->relations();
+        $scopes = $this->scopes();
+        if(isset($relations[$name])) {
+            $related = $relations[$name][0];
+            $model = $relations[$name][1];
+            $columns = $relations[$name][2];
+            $paramnum = count($relations[$name]);
+            if($related == 'hasbelong') {
+                $pk = $relations[$name][3];
+                return mini_db_model::model($model)->getByPk($this->$pk, $columns);
+            } else if($related == 'hasmany') {
+                $method = $relations[$name][3];
+                if(is_array($columns)) {
+                    foreach($columns as $k => $column) {
+                        $params[$k] = $this->$column;
+                    }
+                }
+                if(isset($argv[0]) && is_array($argv[0])) {
+                    $params = array_merge($params ,$argv);
+                }
+                if(empty($method))
+                {
+                     throw new Exception("method not empty!");       
+                }
+                return mini_db_model::model($model)->$method($params);
+            }
+        } else if(isset($scopes[$name])) {
+            
+            $condition = new mini_db_condition($scopes[$name]);
+            $condition->params = $argv[0];
+            if($scopes[$name]['hasmany'] == true) {
+                return $this->record->findAll($condition);
+            } else {
+                return $this->record->find($condition);
+            }
+        } else {
+            throw new Exception("not find __call $name!");
+        }
+    }
+    public function relations()
+    {
+        return array();
+    }
+    public function scopes()
+    {
+        return array();
+    }
     public function setAttr($attr = array())
     {
         
-    	// if model deleted not set value
-    	if($this->isDirty == true)
-    		throw new Exception("model deleted!");
-    
-    	$this->validAttr($attr);
-    	// if $name in columns, create update Columns
-    	if(!empty($attr))
-    	foreach($attr as $name => $value)
-    	{
-        	if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
-        		$this->updateColumns[$name] = $value;
-        	}
-        	$this->attributes[$name] = $value;
-    	}
+        // if model deleted not set value
+        if($this->isDirty == true)
+            throw new Exception("model deleted!");
+        
+        $this->validAttr($attr);
+        // if $name in columns, create update Columns
+        if(! empty($attr))
+            foreach($attr as $name => $value) {
+                if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
+                    $this->updateColumns[$name] = $value;
+                }
+                $this->attributes[$name] = $value;
+            }
     }
     public function __set($name, $value)
     {
@@ -156,15 +202,18 @@ abstract class mini_db_model
         if($this->isDirty == true)
             throw new Exception("model deleted!");
         
-        $this->validupdate(array($name=>$value));
-            // if $name in columns, create update Columns
+        $this->validupdate(array(
+                $name=>$value 
+        ));
+        // if $name in columns, create update Columns
         if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
             $this->updateColumns[$name] = $value;
         }
         $this->attributes[$name] = $value;
     }
-    public function getByPk($pk = '', $select = array('*'))
+    public function getByPk($pk, $select = array('*'))
     {
+        if(empty($pk)) throw new Exception("pk not empty!");
         return $this->record->findByPk($pk ,$select);
     }
     public function get($name)
@@ -200,7 +249,8 @@ abstract class mini_db_model
             $this->isDelete = false;
             $affectnum = $this->record->buildDelete();
             
-            if($affectnum <= 0) throw new Exception("version controller delete not affect!");
+            if($affectnum <= 0)
+                throw new Exception("version controller delete not affect!");
         }
     }
     public function buildUpdate()
@@ -210,13 +260,13 @@ abstract class mini_db_model
                 if(in_array($name ,$this->columns))
                     $data[$name] = $value;
             }
-            if($this->autoSave)
-            {
+            if($this->autoSave) {
                 $data['version'] = $this->attributes['version'] + 1;
             }
             $this->updateColumns = array();
             $affectnum = $this->record->buildUpdate($data);
-            if($affectnum <= 0) throw new Exception("version controller update not affect!");
+            if($affectnum <= 0)
+                throw new Exception("version controller update not affect!");
         }
     }
     public function clear()
@@ -231,14 +281,6 @@ abstract class mini_db_model
         $this->buildUpdate();
         $this->buildDelete();
         $this->clear();
-    }
-    public function validupdate()
-    {
-    
-    }
-    public function validcreate($data=array())
-    {
-    
     }
     public function checkPrimaryKey()
     {

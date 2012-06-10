@@ -1,8 +1,46 @@
 mini code note
 @auther@ 		    inhell
 
+@data@				2012-6-10
+@title@				add model relations and scopes function
+@descript@
 
-
+					public function relations()
+				    {
+				        return array(
+				                	"profileR"=>array(
+					                        'profile',
+					                        'profile_id',
+				                        ),
+				                	"profileRR"=>array(
+					                		'profile',
+					                         array(":message"=>"email"),
+					                        'mymessage'
+				                	)
+				             
+				                );
+				    }
+				    public function scopes()
+				    {
+				        return array(
+				                	"profile"=>array(
+				                	        	'hasmany'=>false,
+				                	        	'select'=>array('first_name','b.message'),
+				                	        	'condition'=>'first_name=:name',
+				                	        	'join'=>"left join profile b on b.id=profile_id and b.message='hello1'",
+				                	        	'order'=>'id desc'
+				                	        ),
+				                );
+				    }
+					public function __call()
+					{
+						$this->scopes();
+						$this->relations();
+						$this->record->find($condition);
+					}
+					
+					
+					
 @data@				2012-6-7
 @title@				add mini define variable 
 @descript@

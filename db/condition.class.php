@@ -88,7 +88,7 @@ class mini_db_condition
 	 * to perform the eager loading. Please refer to {@link CActiveRecord::with()} on how to specify this parameter.
 	 * @since 1.1.0
 	 */
-	public $with;
+// 	public $with;
 	/**
 	 * @var string the alias name of the table. If not set, it means the alias is 't'.
 	 */
@@ -109,39 +109,39 @@ class mini_db_condition
 	 *
 	 * @since 1.1.4
 	 */
-	public $together;
-	/**
-	 * @var string the name of the AR attribute whose value should be used as index of the query result array.
-	 * Defaults to null, meaning the result array will be zero-based integers.
-	 * @since 1.1.5
-	 */
-	public $index;
-	/**
-     * @var mixed scopes to apply
-	 *
-     * This property is effective only when passing criteria to
-	 * the one of the following methods:
-     * <ul>
-     * <li>{@link CActiveRecord::find()}</li>
-     * <li>{@link CActiveRecord::findAll()}</li>
-     * <li>{@link CActiveRecord::findByPk()}</li>
-     * <li>{@link CActiveRecord::findAllByPk()}</li>
-     * <li>{@link CActiveRecord::findByAttributes()}</li>
-     * <li>{@link CActiveRecord::findAllByAttributes()}</li>
-     * <li>{@link CActiveRecord::count()}</li>
-     * </ul>
-	 *
-	 * Can be set to one of the following:
-	 * <ul>
-	 * <li>One scope: $criteria->scopes='scopeName';</li>
-	 * <li>Multiple scopes: $criteria->scopes=array('scopeName1','scopeName2');</li>
-	 * <li>Scope with parameters: $criteria->scopes=array('scopeName'=>array($params));</li>
-	 * <li>Multiple scopes with parameters: $criteria->scopes=array('scopeName1'=>array($params1),'scopeName2'=>array($params2));</li>
-	 * <li>Multiple scopes with the same name: array(array('scopeName'=>array($params1)),array('scopeName'=>array($params2)));</li>
-	 * </ul>
-	 * @since 1.1.7
-	 */
-	public $scopes;
+// 	public $together;
+// 	/**
+// 	 * @var string the name of the AR attribute whose value should be used as index of the query result array.
+// 	 * Defaults to null, meaning the result array will be zero-based integers.
+// 	 * @since 1.1.5
+// 	 */
+// 	public $index;
+// 	/**
+//      * @var mixed scopes to apply
+// 	 *
+//      * This property is effective only when passing criteria to
+// 	 * the one of the following methods:
+//      * <ul>
+//      * <li>{@link CActiveRecord::find()}</li>
+//      * <li>{@link CActiveRecord::findAll()}</li>
+//      * <li>{@link CActiveRecord::findByPk()}</li>
+//      * <li>{@link CActiveRecord::findAllByPk()}</li>
+//      * <li>{@link CActiveRecord::findByAttributes()}</li>
+//      * <li>{@link CActiveRecord::findAllByAttributes()}</li>
+//      * <li>{@link CActiveRecord::count()}</li>
+//      * </ul>
+// 	 *
+// 	 * Can be set to one of the following:
+// 	 * <ul>
+// 	 * <li>One scope: $criteria->scopes='scopeName';</li>
+// 	 * <li>Multiple scopes: $criteria->scopes=array('scopeName1','scopeName2');</li>
+// 	 * <li>Scope with parameters: $criteria->scopes=array('scopeName'=>array($params));</li>
+// 	 * <li>Multiple scopes with parameters: $criteria->scopes=array('scopeName1'=>array($params1),'scopeName2'=>array($params2));</li>
+// 	 * <li>Multiple scopes with the same name: array(array('scopeName'=>array($params1)),array('scopeName'=>array($params2)));</li>
+// 	 * </ul>
+// 	 * @since 1.1.7
+// 	 */
+// 	public $scopes;
 
 	/**
 	 * Constructor.
@@ -373,38 +373,10 @@ class mini_db_condition
 	 * @return CDbCriteria the criteria object itself
 	 * @since 1.1.1
 	 */
-	public function compare($column, $value, $partialMatch=false, $operator='AND', $escape=true)
+	public function compare($column, $op,  $value, $operator='AND')
 	{
-		if(is_array($value))
-		{
-			if($value===array())
-				return $this;
-			return $this->addInCondition($column,$value,$operator);
-		}
-		else
-			$value="$value";
 
-		if(preg_match('/^(?:\s*(<>|<=|>=|<|>|=))?(.*)$/',$value,$matches))
-		{
-			$value=$matches[2];
-			$op=$matches[1];
-		}
-		else
-			$op='';
-        //@todo mini modify
-		if($value==='')
-			return $this;
-		if($partialMatch)
-		{
-			if($op==='')
-				return $this->addSearchCondition($column,$value,$escape,$operator);
-			if($op==='<>')
-				return $this->addSearchCondition($column,$value,$escape,$operator,'NOT LIKE');
-		}
-		else if($op==='')
-			$op='=';
-
-		$this->addCondition($column.$op.self::PARAM_PREFIX.self::$paramCount,$operator);
+		$this->addCondition($column." ".$op." ".self::PARAM_PREFIX.self::$paramCount,$operator);
 		$this->params[self::PARAM_PREFIX.self::$paramCount++]=$value;
 
 		return $this;
@@ -462,7 +434,11 @@ class mini_db_condition
 		if($this->select!==$criteria->select)
 		{
 		    
-		    if($this->select === '*' || $criteria->select === '*')
+		    if($this->select === '*' || $criteria->select === '*' )
+		        $this->select = '*';
+		    else if (is_array($this->select) && in_array('*',$this->select) )
+		        $this->select = '*';
+		    else if(is_array($criteria->select) && in_array('*', $criteria->select))
 		        $this->select = '*';
 //			if($this->select==='*')
 //				$this->select=$criteria->select;
@@ -529,71 +505,9 @@ class mini_db_condition
 		if($criteria->distinct>0)
 			$this->distinct=$criteria->distinct;
 
-		if($criteria->together!==null)
-			$this->together=$criteria->together;
+		
 
-		if($criteria->index!==null)
-			$this->index=$criteria->index;
 
-		if(empty($this->scopes))
-			$this->scopes=$criteria->scopes;
-		else if(!empty($criteria->scopes))
-		{
-			$scopes1=(array)$this->scopes;
-			$scopes2=(array)$criteria->scopes;
-			foreach($scopes1 as $k=>$v)
-			{
-				if(is_integer($k))
-					$scopes[]=$v;
-				else if(isset($scopes2[$k]))
-					$scopes[]=array($k=>$v);
-				else
-					$scopes[$k]=$v;
-			}
-			foreach($scopes2 as $k=>$v)
-			{
-				if(is_integer($k))
-					$scopes[]=$v;
-				else if(isset($scopes1[$k]))
-					$scopes[]=array($k=>$v);
-				else
-					$scopes[$k]=$v;
-			}
-			$this->scopes=$scopes;
-		}
-
-		if(empty($this->with))
-			$this->with=$criteria->with;
-		else if(!empty($criteria->with))
-		{
-			$this->with=(array)$this->with;
-			foreach((array)$criteria->with as $k=>$v)
-			{
-				if(is_integer($k))
-					$this->with[]=$v;
-				else if(isset($this->with[$k]))
-				{
-					$excludes=array();
-					foreach(array('joinType','on') as $opt)
-					{
-						if(isset($this->with[$k][$opt]))
-							$excludes[$opt]=$this->with[$k][$opt];
-						if(isset($v[$opt]))
-							$excludes[$opt]= ($opt==='on' && isset($excludes[$opt]) && $v[$opt]!==$excludes[$opt]) ?
-								"($excludes[$opt]) AND $v[$opt]" : $v[$opt];
-						unset($this->with[$k][$opt]);
-						unset($v[$opt]);
-					}
-					$this->with[$k]=new self($this->with[$k]);
-					$this->with[$k]->mergeWith($v,$useAnd);
-					$this->with[$k]=$this->with[$k]->toArray();
-					if (count($excludes)!==0)
-						$this->with[$k]=CMap::mergeArray($this->with[$k],$excludes);
-				}
-				else
-					$this->with[$k]=$v;
-			}
-		}
 	}
 
 	/**
@@ -602,7 +516,7 @@ class mini_db_condition
 	public function toArray()
 	{
 		$result=array();
-		foreach(array('select', 'condition', 'params', 'limit', 'offset', 'order', 'group', 'join', 'having', 'distinct', 'scopes', 'with', 'alias', 'index', 'together') as $name)
+		foreach(array('select', 'condition', 'params', 'limit', 'offset', 'order', 'group', 'join', 'having', 'distinct') as $name)
 			$result[$name]=$this->$name;
 		return $result;
 	}

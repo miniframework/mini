@@ -11,13 +11,37 @@ class mini_db_builder
     }
     public function findCommand($schema, $condition, $alias = 't')
     {
-        $select = is_array($condition->select) ? implode(', ' ,$condition->select) : $condition->select;
+        
         if($condition->alias != '') {
             $alias = $condition->alias;
         }
         $alias = $schema->quoteTableName($alias);
+        $prefix = $alias . '.';
+        
+        if(is_array($condition->select))
+        {
+            foreach($condition->select as $k =>$name)
+            {
+               if($pos=strrpos($name,'.') == false)
+               {
+                   $select[] = $prefix . $schema->quoteColumnName($name);
+               }
+               else
+               {
+                   $select[] =  $schema->quoteColumnName($name);
+               }
+            }
+           $select = implode(', ' ,$select);
+            
+        }
+        else
+        {
+            $select = $condition->select;
+        }
+       // $select = is_array($condition->select) ? implode(', ' ,$condition->select) : $condition->select;
+        
         if($select === '*' && ! empty($condition->join)) {
-            $prefix = $alias . '.';
+          
             $select = array();
             foreach($schema->getColumnNames() as $name)
                 $select[] = $prefix . $schema->quoteColumnName($name);
@@ -81,7 +105,7 @@ class mini_db_builder
         $sql = $this->bindValues($sql ,$values);
         return $sql;
     }
-    public function deleteCommandByPk($schema, $pks)
+    public function deleteCommandByPk($schema, $pk)
     {
         $placeholders = array();
         $i = 0;
@@ -119,7 +143,6 @@ class mini_db_builder
          $sql = "UPDATE {$schema->table} SET " . implode(', ' ,$fields);
          $sql = $this->applyCondition($sql, implode('and ', $placeholders));
          $sql =  $this->bindValues($sql, $values);
-         echo $sql;
          return $sql;
     }
     public function updateCommand($schema, $data, $condition)
