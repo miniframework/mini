@@ -86,7 +86,7 @@ abstract class mini_db_model
     {
         if($this->isDirty == true)
             throw new Exception("object Dirty!");
-        $this->validcreate($data);
+       // $this->validcreate($data);
         
         $this->attributes = $data;
         
@@ -202,9 +202,9 @@ abstract class mini_db_model
         if($this->isDirty == true)
             throw new Exception("model deleted!");
         
-        $this->validupdate(array(
-                $name=>$value 
-        ));
+//         $this->validupdate(array(
+//                 $name=>$value 
+//         ));
         // if $name in columns, create update Columns
         if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
             $this->updateColumns[$name] = $value;
