@@ -80,7 +80,7 @@ class mini_web_view extends mini_base_component
         $layoutFile = $layoutPath . "/" . $layoutName;
         $layoutFile .= $this->extension;
         if(! file_exists($layoutFile))
-            mini::t('layout file {layoutFile} not exists.',array('{layoutFile}'=>$layoutFile));
+            mini::e('layout file {layoutFile} not exists.',array('{layoutFile}'=>$layoutFile));
         return $layoutFile;
     
     }
@@ -90,7 +90,7 @@ class mini_web_view extends mini_base_component
         $viewName .= $this->extension;
         $viewFile = $viewPath . "/" . $viewName;
         if(! file_exists($viewFile))
-            mini::t('view file {viewFile} not exists.',array('{viewFile}'=>$viewFile));
+            mini::e('view file {viewFile} not exists.',array('{viewFile}'=>$viewFile));
         return $viewFile;
     
     }
@@ -103,18 +103,18 @@ class mini_web_view extends mini_base_component
         $dispatch = mini_base_application::app()->getDispatch();
         
         if($dispatch->getControllerId() == $app . $controller . $action) {
-                mini::t('controller {controller} not same parent.',array('{controller}'=>$dispatch->getControllerId()));
+                mini::e('controller {controller} not same parent.',array('{controller}'=>$dispatch->getControllerId()));
         }
         $class = $dispatch->runController($route, mini_web_dispatch::CONTROLLER_TYPE, $params);
         if($class == null) {
-            mini::t('controller {controller} not exitst.',array('{controller}'=>$controller));
+            mini::e('controller {controller} not exitst.',array('{controller}'=>$controller));
         }
     }
     private function getPartialFile($partialName, $partialPath)
     {
         $partialFile = $partialPath . "/" . $partialName;
         if(! file_exists($partialFile))
-            mini::t('view file {partialFile} not exists.',array('{partialFile}'=>$partialFile));
+            mini::e('view file {partialFile} not exists.',array('{partialFile}'=>$partialFile));
         return $partialFile;
     }
     private function getPartialPath()

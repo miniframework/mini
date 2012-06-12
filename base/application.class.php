@@ -20,7 +20,7 @@ class mini_base_application
     {
         
         if(mini::$handle == null) 
-             mini::t("must first init mini.");
+             mini::e("must first init mini.");
         $this->id = sprintf('%x' ,crc32($this->name . time()));
         $this->initLogger();
         $this->initConfig();

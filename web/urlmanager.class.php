@@ -36,7 +36,7 @@ class mini_web_urlmanager extends mini_base_component
 	            }
             }
         } else {
-            mini::t("rule {rule} must implements of mini_base_rule",array('{rule}'=>$rule));
+            mini::e("rule {rule} must implements of mini_base_rule",array('{rule}'=>$rule));
         }
     }
     public function getAction()
