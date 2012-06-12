@@ -135,8 +135,6 @@ class mini_web_view extends mini_base_component
     }
     private function provider($dataProvider, $params = array(), $filter, $columns, $view,  $type = 'php')
     {
-//        array("id"=> "like  %hello%",
-//               "and "
     }
 }
 ?>
