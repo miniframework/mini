@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mini>
-	<title>application</title>
-	<domain>domain.com</domain>
 	<db>
 		<driver>mysqli</driver>
 		<master name="master">
@@ -12,7 +10,7 @@
 			<dbname>test</dbname>
 			<charset>utf8</charset>
 		</master>
-		<slave name="slave1" extends="a">
+		<slave name="slave1">
 			<host>127.0.0.1</host>
 			<user>root</user>
 			<pass></pass>
@@ -31,19 +29,19 @@
 			<percent>60</percent>
 		</slave>
 	</db>
-	<autoload>
-		<file>config/~autoload.php</file>
+	<loader>
 		<dirs>models</dirs>
-	</autoload>
+	</loader>
 	
 	<router>
-		<rule>
+		<rules>
 			<app>admin</app>
-			<class>mini_web_urlrule</class>
-			
-		</rule>
+			<class>mini_web_urlrule</class>			
+		</rules>
 	</router>
-	
+	<event>
+		<e>login</e>
+	</event>
 	<default>
 		<app>admin</app>
 		<controller>index</controller>
@@ -53,11 +51,13 @@
 		<app>error</app>
 		<controller>index</controller>
 		<action>404</action>
-	</error>
-	
-	<debug>
-		<user>0</user>
-		<error>1</error>
-		<sql>2</sql>
-	</debug>
+	</error>	
+	<logger>
+		<logs name="mylog">
+			<class>mini_log_file</class>
+			<levels>info,warning,error</levels>
+			<categories>app,exception.*,php</categories>
+			<file>mylog.log</file>
+		</logs>
+	</logger>
 </mini>
