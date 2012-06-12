@@ -1,17 +1,56 @@
 <?php
 class mini_web_dispatch extends mini_base_component
 {
+    /**
+     *
+     * @var string default app name
+     */
     private $defaultapp = "site";
+    /**
+     *
+     * @var string default controller name
+     */
     private $defaultcontroller = "index";
+    /**
+     *
+     * @var string default action name
+     */
     private $defaultaction = "index";
+    /**
+     *
+     * @var string default error app name
+     */
     private $errorapp = "error";
+    /**
+     *
+     * @var string default error controller name
+     */
     private $errorcontroller = "index";
+    /**
+     *
+     * @var string default error action name
+     */
     private $erroraction = "index";
+    /**
+     *
+     * @var current app,controller,action id.
+     */
     private $controllerId = "";
+    /**
+     * default:dispatch application ,error:dispatch to error , controller: user
+     * call dispatch.
+     * 
+     * @var string dispatch type
+     */
     const DEFAULT_TYPE = 'default';
     const ERROR_TYPE = 'error';
     const CONTROLLER_TYPE = 'controller';
-    
+
+    /**
+     * init default app,controller,action name
+     * 
+     * @see mini_base_component::init()
+     */
     public function init()
     {
         $config = mini_base_application::app()->getConfig();
@@ -35,10 +74,19 @@ class mini_web_dispatch extends mini_base_component
         if(! empty($error['action'])) {
             $this->erroraction = $error['action'];
         }
+    
     }
+
+    /**
+     * create a controller by request
+     * 
+     * @param mini_web_urlmanager $route
+     * @param string $type 
+     * @param array $params set controller params {@link mini_web_view::controller}
+     * @return mini_web_controller
+     */
     public function runController($route, $type = 0, $params = array())
     {
-        
         if($type == self::DEFAULT_TYPE) {
             $app = $route->getApp();
             $controller = $route->getController();
@@ -74,7 +122,6 @@ class mini_web_dispatch extends mini_base_component
         $event = mini_base_application::app()->getEvent();
         $event->onbeginApp(array('app'=>$app));
         
-        
         $className = $controller . "Controller";
         $classFile = $appPath . "/" . $app . "/" . $controller . ".class.php";
         if(! file_exists($classFile)) {
@@ -83,49 +130,47 @@ class mini_web_dispatch extends mini_base_component
         
         require_once $classFile;
         
-        if(! class_exists($className, false) || ! is_subclass_of($className, "mini_web_controller")) {
+        if(! class_exists($className ,false) || ! is_subclass_of($className ,"mini_web_controller")) {
             return null;
         }
         $event->onbeforeApp(array('app'=>$app));
         $event->onbeforeController(array('app'=>$app,'controller'=>$controller));
         
-        
         $class = new $className();
-       // $class =  mini_base_application::app()->getComponent($className);
+        // $class = mini_base_application::app()->getComponent($className);
         $actionName = "do" . ucfirst($action);
-        if(! method_exists($class, $actionName)) {
+        if(! method_exists($class ,$actionName)) {
             return null;
         }
         
         $class->init();
         
+        $map = array("oapp"=>$route->getApp(),"ocontroller"=>$route->getController(),"oaction"=>$route->getAction(),"app"=>$app,"controller"=>$controller,"action"=>$action);
         
-       $map = array("oapp"=>$route->getApp(),
-               "ocontroller"=>$route->getController(),
-               "oaction"=>$route->getAction(),
-               "app"=>$app,
-               "controller"=>$controller,
-               "action"=>$action);
-       
         $class->setControllerMap($map);
-	
-		$class->setParentId($this->controllerId);
-		$this->controllerId = $app.$controller.$action;
-		
-		
+        
+        $class->setParentId($this->controllerId);
+        $this->controllerId = $app . $controller . $action;
+        
         $class->setParams($params);
-		
-       
+        
         $class->run($actionName);
         $event->onendController(array('app'=>$app,'controller'=>$controller));
         $event->onendApp(array('app'=>$app));
         
         return $class;
+    
     }
+
+    /**
+     * return app,controller,action id.
+     * 
+     * @return string
+     */
     public function getControllerId()
     {
         return $this->controllerId;
+    
     }
-
 }
 ?>
