@@ -74,7 +74,7 @@ class mini_struct_list implements IteratorAggregate,ArrayAccess,Countable
     	else if($index>=0 && $index<$this->count) // in case the value is null
     		return $this->data[$index];
     	else
-    		throw new Exception('List index "{index}" is out of bound');
+    		mini::e('List index "{index}" is out of bound',array('{index}'=>$index));
     }
     
     public function add($item)
@@ -94,10 +94,10 @@ class mini_struct_list implements IteratorAggregate,ArrayAccess,Countable
     			$this->count++;
     		}
     		else
-    			throw new Exception('List index "{index}" is out of bound.');
+    			mini::e('List index "{index}" is out of bound.',array('{index}'=>$index));
     	}
     	else
-    		throw new Exception('The list is read only.');
+    		mini::e('The list is read only.');
     }
     public function remove($item)
     {
@@ -126,10 +126,10 @@ class mini_struct_list implements IteratorAggregate,ArrayAccess,Countable
     			}
     		}
     		else
-    			throw new Exception('List index "{index}" is out of bound.');
+    			mini::e('List index "{index}" is out of bound.',array('{index}'=>$index));
     	}
     	else
-    		throw new CException('The list is read only.');
+    		mini::e('The list is read only.');
     }
     public function clear()
     {
@@ -167,7 +167,7 @@ class mini_struct_list implements IteratorAggregate,ArrayAccess,Countable
     			$this->add($item);
     	}
     	else if($data!==null)
-    		throw new Exception('List data must be an array or an object implementing Traversable.');
+    		mini::e('List data must be an array or an object implementing Traversable.');
     }
     /**
      * Returns whether there is an item at the specified offset.

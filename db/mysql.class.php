@@ -36,7 +36,7 @@ class mini_db_mysql implements mini_db_interface
         $this->link = @mysql_connect($this->config['host'], $this->config['user'], $this->config['pass']);
         
         if(! $this->link) {
-            throw new Exception('Could not connect: ' . mysql_error());
+            mini::e('Could not connect: {error}',array('{error}'=>mysql_error()) );
         }
         mysql_select_db($this->config['dbname'], $this->link);
         $charset = $this->config['charset'];
@@ -58,7 +58,7 @@ class mini_db_mysql implements mini_db_interface
         }
         $query = mysql_query($sql, $this->link);
         if(! $query) {
-            throw new Exception(mysql_errno($this->link) . ": " . mysql_error($this->link) . " sql: " . $sql);
+            mini::e('mysql query error:{error}:{link}:{sql}.' ,array('{error}'=>mysql_errno($this->link),'{link}'=>mysql_error($this->link), '{sql}'=>$sql ));
         }
         return $query;
     }
@@ -78,14 +78,14 @@ class mini_db_mysql implements mini_db_interface
             }
             $query = mysql_unbuffered_query($sql, $this->link);
             if(! $query) {
-                throw new Exception(mysql_errno($this->link) . ": " . mysql_error($this->link) . " sql: " . $sql);
+                mini::e('mysql query unbuffer error:{error}:{link}:{sql}' ,array('{error}'=>mysql_errno($this->link),'{link}'=>mysql_error($this->link), '{sql}'=>$sql ));
             }
             while( $row = mysql_fetch_assoc($query) ) {
                 $unbuffer->callback($row);
             }
             $this->free($query);
         } else {
-            throw new Exception("if use unbuffer must expend mini_db_unbuffer interface");
+            mini::e('if use unbuffer must expend mini_db_unbuffer interface');
         }
     }
     /**

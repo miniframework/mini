@@ -82,12 +82,12 @@ class mini_boot_loader
                 }
                 else
                 {
-                    throw new Exception("file not find!");
+                    mini::e("class {classname} not find class file {classfile}", array('{classname}'=>$classname, '{classfile}'=>$classfile));
                 }
             }
             else
             {
-                throw new Exception("class not in namespace!");
+                mini::e("class {classname} not in namespace!", array('{classname}'=>$classname));
             }
        }
     

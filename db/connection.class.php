@@ -45,12 +45,12 @@ class mini_db_connection
         
         //if db config empty throw exception
         if(empty($dbconfig)) {
-            throw new Exception("not find mysql config for <db></db>");
+            mini::t("not find mysql config for <db></db>");
         }
         $master = $dbconfig['master']['name'];
         //if master name empty throw exception
         if(empty($master)) {
-            throw new Exception("master mysql must input name attr <master name=''></db>");
+            mini::t("master mysql must input name attr <master name=''></db>");
         }
         //get db config to dbconfig
         $this->dbconfig['master'] = array("host" => $dbconfig['master']['host'], "user" => $dbconfig['master']['user'], "pass" => $dbconfig['master']['pass'], "port" => $dbconfig['master']['port'], "dbname" => $dbconfig['master']['dbname'], "charset" => $dbconfig['master']['charset'], "name" => $dbconfig['master']['name']);
@@ -70,7 +70,7 @@ class mini_db_connection
             $percent = 0;
             foreach ( $slave as $key => $value ) {
                 if(! array_key_exists("name", $value)) {
-                    throw new Exception("slave mysql must input name attr <slave name=''></slave>");
+                    mini::t("slave mysql must input name attr <slave name=''></slave>");
                 }
                 $this->dbconfig['slave'][$key] = array("host" => $value['host'], "user" => $value['user'], "pass" => $value['pass'], "port" => $value['port'], "dbname" => $value['dbname'], "charset" => $value['charset'], "spercent" => $percent, "epercent" => $value['percent'] + $percent, "name" => $value['name']);
                 $this->dbconfig['slave'][$key]['handle'] = $this->getDbObj($this->dbconfig['slave'][$key]);
@@ -79,7 +79,7 @@ class mini_db_connection
         }
         //if percent add lt 100 or gt 100  throw exception
         if($percent < 100 || $percent > 100) {
-            throw new Exception("slave mysql percent must 100% <percent></percent>");
+            mini::t("slave mysql percent must 100% <percent></percent>");
         }
     }
     public function getSchema()
@@ -112,7 +112,7 @@ class mini_db_connection
         if($dbObj instanceof mini_db_interface) {
             return $dbObj;
         } else {
-            throw new Exception("dbObj must instance of mini_db_interface");
+            mini::t("dbObj must instance of mini_db_interface");
         }
     
     }

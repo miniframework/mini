@@ -23,7 +23,7 @@ abstract class mini_db_model
         // throw new Exception("if autoIncrement , primaryKey must only");
         // table , columns,primaryKey not empty
         if(empty($this->table) || empty($this->columns) || ! is_array($this->columns) || empty($this->primaryKey))
-            throw new Exception("create model table , columns , primaryKey must not empty!");
+            mini::e("create model table , columns , primaryKey  not empty");
             // init record
         $this->record = new mini_db_record($this);
         
@@ -38,7 +38,7 @@ abstract class mini_db_model
         // if autoSave= true must version
         if($this->autoSave) {
             if(! in_array("version" ,$this->columns)) {
-                throw new Exception("if use autoSave must add {version} cloumn!");
+                mini::e("if use autoSave must add version to cloumns");
             }
             
             $initSelect[] = "version";
@@ -85,7 +85,7 @@ abstract class mini_db_model
     public function create($data = array())
     {
         if($this->isDirty == true)
-            throw new Exception("object Dirty!");
+             mini::e("model deleted,dirty is true not create model.");
        // $this->validcreate($data);
         
         $this->attributes = $data;
@@ -111,7 +111,7 @@ abstract class mini_db_model
         $this->checkPrimaryKey();
         // if model deleted not get value
         if($this->isDirty == true)
-            throw new Exception("object Dirty!");
+            mini::e("model deleted,dirty is true not get attributes.");
             // get attributes value
         if(isset($this->attributes[$name]))
             return $this->attributes[$name];
@@ -126,7 +126,7 @@ abstract class mini_db_model
             $this->record->find($condition);
             return $this->attributes[$name];
         } else {
-            throw new Exception("not find $name attributes!");
+            mini::e("class {class} not find {attributes} attributes",array("{class}"=>__CLASS__,"{attributes}"=>$name));
         }
     }
     public function __call($name, $argv)
@@ -153,7 +153,7 @@ abstract class mini_db_model
                 }
                 if(empty($method))
                 {
-                     throw new Exception("method not empty!");       
+                     mini::e("model relations hasmany must set {name} method on argv[3]",array('{name}'=>$name));       
                 }
                 return mini_db_model::model($model)->$method($params);
             }
@@ -167,7 +167,7 @@ abstract class mini_db_model
                 return $this->record->find($condition);
             }
         } else {
-            throw new Exception("not find __call $name!");
+            mini::e("class {class} not find method {name} ",array('{class}'=>__CLASS__,'{name}'=>$name));
         }
     }
     public function relations()
@@ -183,9 +183,8 @@ abstract class mini_db_model
         
         // if model deleted not set value
         if($this->isDirty == true)
-            throw new Exception("model deleted!");
+            mini::e("model deleted,dirty is true not get attributes.");
         
-        $this->validAttr($attr);
         // if $name in columns, create update Columns
         if(! empty($attr))
             foreach($attr as $name => $value) {
@@ -200,7 +199,7 @@ abstract class mini_db_model
         
         // if model deleted not set value
         if($this->isDirty == true)
-            throw new Exception("model deleted!");
+            mini::e("model deleted,dirty is true not set attributes.");
         
 //         $this->validupdate(array(
 //                 $name=>$value 
@@ -213,7 +212,7 @@ abstract class mini_db_model
     }
     public function getByPk($pk, $select = array('*'))
     {
-        if(empty($pk)) throw new Exception("pk not empty!");
+        if(empty($pk))  mini::e("pk not empty.");
         return $this->record->findByPk($pk ,$select);
     }
     public function get($name)
@@ -250,7 +249,7 @@ abstract class mini_db_model
             $affectnum = $this->record->buildDelete();
             
             if($affectnum <= 0)
-                throw new Exception("version controller delete not affect!");
+                mini::e("version control delete not affect any row");
         }
     }
     public function buildUpdate()
@@ -266,7 +265,7 @@ abstract class mini_db_model
             $this->updateColumns = array();
             $affectnum = $this->record->buildUpdate($data);
             if($affectnum <= 0)
-                throw new Exception("version controller update not affect!");
+                mini::e("version control update not affect any row");
         }
     }
     public function clear()
@@ -285,7 +284,7 @@ abstract class mini_db_model
     public function checkPrimaryKey()
     {
         if(empty($this->attributes[$this->primaryKey]))
-            throw new Exception("must first load model primaryKey data");
+            mini::e("use model must first load  primaryKey data to attributes");
     }
     public function getTag()
     {

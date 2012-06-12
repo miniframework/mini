@@ -1,6 +1,10 @@
 mini code note
 @auther@ 		    inhell
-
+@data@				2012-6-12
+@title@				add mini exception
+@descript@	
+					call mini::t() will thorw exception
+ 				
 @data@				2012-6-10
 @title@				add model relations and scopes function
 @descript@
@@ -113,7 +117,6 @@ mini code note
 					controller, action. 
 				
 					
-					
 @date@				2012-6-3
 @title@				add model version controlle.
 @descript@			
@@ -142,7 +145,6 @@ mini code note
 					    else 
 					    	succes 
 				    )) 
-				    
 				    
 					
 @data@				2012-6-2

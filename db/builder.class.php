@@ -129,7 +129,7 @@ class mini_db_builder
         	}
         }
         if($fields === array())
-        	throw new Exception('No columns are being updated for table "{table}');
+        	mini::t('No columns are being updated for table "{table}.',array('{table}'=>$schema->table));
         $placeholders[] = $schema->primaryKey.'='.self::PARAM_PREFIX.$i;
         $values[self::PARAM_PREFIX . $i] = $pk;
         $i++;
@@ -159,7 +159,7 @@ class mini_db_builder
             }
         }
         if($fields === array())
-            throw new Exception('No columns are being updated for table "{table}');
+            mini::t('No columns are being updated for table "{table}.',array('{table}'=>$schema->table));
         $sql = "UPDATE {$schema->table} SET " . implode(', ' ,$fields);
         $sql = $this->applyJoin($sql ,$condition->join);
         $sql = $this->applyCondition($sql ,$condition->condition);

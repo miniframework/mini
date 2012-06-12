@@ -75,7 +75,7 @@ class mini_http_request extends  mini_base_component
 			else if(strpos($_SERVER['PHP_SELF'],$scriptUrl)===0)
 				$pathInfo=substr($_SERVER['PHP_SELF'],strlen($scriptUrl));
 			else
-				throw new Exception('HttpRequest is unable to determine the path info of the request.');
+				mini::e('HttpRequest is unable to determine the path info of the request.');
 
 			$this->pathInfo=trim($pathInfo,'/');
 		}
@@ -129,7 +129,7 @@ class mini_http_request extends  mini_base_component
 					$this->requestUri.='?'.$_SERVER['QUERY_STRING'];
 			}
 			else
-				throw new Exception('HttpRequest is unable to determine the request URI.');
+				mini::e('HttpRequest is unable to determine the request URI.');
 		}
 
 		return $this->requestUri;
@@ -156,7 +156,7 @@ class mini_http_request extends  mini_base_component
 			else if(isset($_SERVER['DOCUMENT_ROOT']) && strpos($_SERVER['SCRIPT_FILENAME'],$_SERVER['DOCUMENT_ROOT'])===0)
 				$this->scriptUrl=str_replace('\\','/',str_replace($_SERVER['DOCUMENT_ROOT'],'',$_SERVER['SCRIPT_FILENAME']));
 			else
-				throw new Exception('HttpRequest is unable to determine the entry script URL.');
+				mini::e('HttpRequest is unable to determine the entry script URL.');
 		}
 		return $this->scriptUrl;
 	}

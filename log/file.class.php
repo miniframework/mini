@@ -48,7 +48,7 @@ class mini_log_file extends mini_base_log
 
 	/**
 	 * @param string $value directory for storing log files.
-	 * @throws CException if the path is invalid
+	 * @throws Exception if the path is invalid
 	 */
 	public function setLogPath($value)
 	{
@@ -56,7 +56,8 @@ class mini_log_file extends mini_base_log
 		$this->logPath=realpath($value);
 		
 		if($this->logPath===false || !is_dir($this->logPath) || !is_writable($this->logPath))
-			throw new Exception('logPath  does not point to a valid directory. Make sure the directory exists and is writable by the Web server process.');
+			mini::e('logPath {logPath} does not point to a valid directory. Make sure the directory exists and is writable by the Web server process.',
+			        array('{logPath}'=>$this->logPath));
 	}
 
 	/**

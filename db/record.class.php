@@ -6,14 +6,14 @@ class mini_db_record
     public function __construct($model)
     {
         if(! $model instanceof mini_db_model) {
-            throw new Exception("model mast extends mini_db_model");
+            mini::e("model must extends mini_db_model");
         }
         $this->model = $model;
     }
     public function getCommandBuilder()
     {
         if($this->model->schema == null) {
-            throw new Exception("model->schemat not null");
+            mini::e("model must set schema");
         }
         return $this->model->schema->getBuilder();
     }
@@ -21,10 +21,10 @@ class mini_db_record
     {
         return mini_db_connection::getHandle();
     }
-    public static function get($sql, $params = array(), $classmodel = '')
+    public static function get($sql, $params = array(), $classmodel)
     {
         if(! class_exists($classmodel)) {
-            throw new Exception("$classmodel not exists!");
+            mini::e("model class {class} not exists",array('{class}'=>$classmodel));
         }
         $model = mini_db_model::model($classmodel);
         mini_db_builder::getHandle()->bindValues($sql ,$params);
@@ -35,7 +35,7 @@ class mini_db_record
     public static function getAll($sql, $params = array(), $classmodel = '')
     {
         if(! class_exists($classmodel)) {
-            throw new Exception("$classmodel not exists!");
+             mini::e("model class {class} not exists",array('{class}'=>$classmodel));
         }
         $model = mini_db_model::model($classmodel);
         mini_db_builder::getHandle()->bindValues($sql ,$params);

@@ -67,8 +67,17 @@ class mini
         $message.="\n---";
         
         $this->displayException($exception);
-        self::getLogger()->log($message, mini_log_logger::LEVEL_ERROR, $category);
-        self::end();
+        
+        try {
+            self::getLogger()->log($message, mini_log_logger::LEVEL_ERROR, $category);
+            self::end();
+        }catch (Exception $e)
+        {
+            if(MINI_DEBUG)
+            {
+                echo $e->getMessage();
+            }
+        }
        
     }
     public function displayException($exception)
@@ -109,9 +118,16 @@ class mini
     		if(isset($_SERVER['REQUEST_URI']))
     			$log.='REQUEST_URI='.$_SERVER['REQUEST_URI'];
     		$this->displayError($code,$message,$file,$line);
-    		self::getLogger()->log($log, mini_log_logger::LEVEL_ERROR, 'php');
-    		self::end();
-    		
+    		try{
+        		self::getLogger()->log($log, mini_log_logger::LEVEL_ERROR, 'php');
+        		self::end();
+    		}catch (Exception $e)
+    		{
+        		if(MINI_DEBUG)
+                {
+                    echo $e->getMessage();
+                }
+    		}
            
     	}
     }
@@ -234,6 +250,11 @@ class mini
     {
         return self::$config;
     }
+    public static function e($message, $params = array())
+    {
+        $message =  $params!==array() ? strtr($message,$params) : $message;
+        throw new mini_base_exception($message);
+    }
     /**
      * create object, class must extends mini_base_component.
      *
@@ -247,11 +268,11 @@ class mini
         } else if(isset($class['class'])) {
             $type = $class['class'];
         } else {
-            throw new Exception('Object configuration must be an array containing a "class" element.');
+            mini::e('Object configuration must be an array containing a "class" element.');
         }
         if(!class_exists($type))
         {
-            throw new Exception("$type class not exists!");
+            mini::e("class {class} not exists!",array('{class}'=>$type));
         }
         if(($n = func_num_args()) > 1) {
             $args = func_get_args();
@@ -277,7 +298,7 @@ class mini
         }
         
         if(! method_exists($object ,"init"))
-            throw new Exception("create component must exists method init!");
+            mini::e("create component must exists method init!");
         $object->init();
         return $object;
     }

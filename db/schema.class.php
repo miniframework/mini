@@ -9,7 +9,7 @@ class mini_db_schema
     public function getBuilder()
     {
         if(empty($this->table) || empty($this->columns))
-            throw new Exception("must set table and columns!");
+            mini::e("get builder before schema must set table and columns");
         if(empty($this->builder))
              $this->builder = mini_db_builder::getHandle();
             return  $this->builder;

@@ -19,7 +19,8 @@ class mini_base_application
     private function __construct()
     {
         
-        if(mini::$handle == null) throw new Exception("must init mini!");
+        if(mini::$handle == null) 
+             mini::t("must first init mini.");
         $this->id = sprintf('%x' ,crc32($this->name . time()));
         $this->initLogger();
         $this->initConfig();
@@ -133,7 +134,7 @@ class mini_base_application
         if($controller == null) {
             $controller = $dispatch->runController($route ,mini_web_dispatch::ERROR_TYPE);
             if($controller == null) {
-                throw new Exception("errorController not exitst!");
+                mini::e("errorController not exists");
             }
         }
         $this->getResponse()->sendResponse();
@@ -160,7 +161,7 @@ class mini_base_application
     }
     public function getResponse()
     {
-    return $this->getComponent("mini_http_response");
+        return $this->getComponent("mini_http_response");
     }
     // public function getView()
     // {

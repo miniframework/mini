@@ -31,7 +31,7 @@ class mini_boot_config
     private function __construct($path)
     {
         if(! file_exists($path)) {
-            throw new Exception("config $path not exists!\r\n");
+            mini::e("config file {path} not exists!", array('{path}'=>$path));
         } else {
             $this->path = $path;
             libxml_use_internal_errors(true);
@@ -43,7 +43,7 @@ class mini_boot_config
                 foreach ( $error as $k => $v ) {
                     $mssage .= "path:" . $path . "\tline:" . $v->line . "\tcolumn" . $v->column . "\tmessage:" . $v->message;
                 }
-                throw new Exception($mssage);
+                 mini::e("config xml libxml_get_errors: {message} ", array('{message}'=>$mssage));
             
             }
         }

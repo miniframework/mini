@@ -53,7 +53,7 @@ class mini_struct_map implements IteratorAggregate,ArrayAccess,Countable
     			$this->add($key,$value);
     	}
     	else if($data!==null)
-    		throw new Exception('Map data must be an array or an object implementing Traversable.');
+    		mini::t('Map data must be an array or an object implementing Traversable.');
     }
     public function count()
     {
@@ -73,7 +73,7 @@ class mini_struct_map implements IteratorAggregate,ArrayAccess,Countable
     			$this->data[$key]=$value;
     	}
     	else
-    		throw new Exception('The map is read only.');
+    		mini::t('The map is read only.');
     }
     public function remove($key)
     {
@@ -93,7 +93,7 @@ class mini_struct_map implements IteratorAggregate,ArrayAccess,Countable
     		}
     	}
     	else
-    		throw new Exception('The map is read only.');
+    		mini::t('The map is read only.');
     }
     public function clear()
     {
