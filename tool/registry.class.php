@@ -1,11 +1,5 @@
 <?php
 /**
- * modify zend_registry to mini_tool_registry
- * @author wzb
- * @data 2012-05-07 modify
- * 
- */
-/**
  * Zend Framework
  *
  * LICENSE

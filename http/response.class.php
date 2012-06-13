@@ -1,77 +1,47 @@
 <?php
 class mini_http_response extends mini_base_component
 {
-/**
- * Zend Framework
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
- *
- * @category   Zend
- * @package    Zend_Controller
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 23967 2011-05-03 14:31:55Z adamlundrigan $
- */
-
-/**
- * Zend_Controller_Response_Abstract
- *
- * Base class for Zend_Controller responses
- *
- * @package Zend_Controller
- * @subpackage Response
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- */
     /**
      * Body content
      * @var array
      */
-    protected $_body = array();
+    protected $body = array();
 
     /**
      * Exception stack
      * @var Exception
      */
-    protected $_exceptions = array();
+    protected $exceptions = array();
 
     /**
      * Array of headers. Each header is an array with keys 'name' and 'value'
      * @var array
      */
-    protected $_headers = array();
+    protected $headers = array();
 
     /**
      * Array of raw headers. Each header is a single string, the entire header to emit
      * @var array
      */
-    protected $_headersRaw = array();
+    protected $headersRaw = array();
 
     /**
      * HTTP response code to use in headers
      * @var int
      */
-    protected $_httpResponseCode = 200;
+    protected $httpResponseCode = 200;
 
     /**
      * Flag; is this response a redirect?
      * @var boolean
      */
-    protected $_isRedirect = false;
+    protected $isRedirect = false;
 
     /**
      * Whether or not to render exceptions; off by default
      * @var boolean
      */
-    protected $_renderExceptions = false;
+    protected $renderExceptions = false;
 
     /**
      * Flag; if true, when header operations are called after headers have been
@@ -82,7 +52,7 @@ class mini_http_response extends mini_base_component
      * @var boolean
      */
     public $headersSentThrowsException = true;
-
+    public function init(){ }
     /**
      * Normalize a header name
      *
@@ -91,7 +61,7 @@ class mini_http_response extends mini_base_component
      * @param  string $name
      * @return string
      */
-    public function init(){ }
+    
     protected function _normalizeHeader($name)
     {
         $filtered = str_replace(array('-', '_'), ' ', (string) $name);
@@ -109,7 +79,7 @@ class mini_http_response extends mini_base_component
      * @param string $name
      * @param string $value
      * @param boolean $replace
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function setHeader($name, $value, $replace = false)
     {
@@ -118,14 +88,14 @@ class mini_http_response extends mini_base_component
         $value = (string) $value;
 
         if ($replace) {
-            foreach ($this->_headers as $key => $header) {
+            foreach ($this->headers as $key => $header) {
                 if ($name == $header['name']) {
-                    unset($this->_headers[$key]);
+                    unset($this->headers[$key]);
                 }
             }
         }
 
-        $this->_headers[] = array(
+        $this->headers[] = array(
             'name'    => $name,
             'value'   => $value,
             'replace' => $replace
@@ -142,7 +112,7 @@ class mini_http_response extends mini_base_component
      *
      * @param string $url
      * @param int $code
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function setRedirect($url, $code = 302)
     {
@@ -159,27 +129,27 @@ class mini_http_response extends mini_base_component
      */
     public function isRedirect()
     {
-        return $this->_isRedirect;
+        return $this->isRedirect;
     }
 
     /**
-     * Return array of headers; see {@link $_headers} for format
+     * Return array of headers; see {@link $headers} for format
      *
      * @return array
      */
     public function getHeaders()
     {
-        return $this->_headers;
+        return $this->headers;
     }
 
     /**
      * Clear headers
      *
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function clearHeaders()
     {
-        $this->_headers = array();
+        $this->headers = array();
 
         return $this;
     }
@@ -188,17 +158,17 @@ class mini_http_response extends mini_base_component
      * Clears the specified HTTP header
      *
      * @param  string $name
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function clearHeader($name)
     {
-        if (! count($this->_headers)) {
+        if (! count($this->headers)) {
             return $this;
         }
 
-        foreach ($this->_headers as $index => $header) {
+        foreach ($this->headers as $index => $header) {
             if ($name == $header['name']) {
-                unset($this->_headers[$index]);
+                unset($this->headers[$index]);
             }
         }
 
@@ -211,15 +181,15 @@ class mini_http_response extends mini_base_component
      * Allows setting non key => value headers, such as status codes
      *
      * @param string $value
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function setRawHeader($value)
     {
         $this->canSendHeaders(true);
         if ('Location' == substr($value, 0, 8)) {
-            $this->_isRedirect = true;
+            $this->isRedirect = true;
         }
-        $this->_headersRaw[] = (string) $value;
+        $this->headersRaw[] = (string) $value;
         return $this;
     }
 
@@ -230,17 +200,17 @@ class mini_http_response extends mini_base_component
      */
     public function getRawHeaders()
     {
-        return $this->_headersRaw;
+        return $this->headersRaw;
     }
 
     /**
      * Clear all {@link setRawHeader() raw HTTP headers}
      *
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function clearRawHeaders()
     {
-        $this->_headersRaw = array();
+        $this->headersRaw = array();
         return $this;
     }
 
@@ -248,17 +218,17 @@ class mini_http_response extends mini_base_component
      * Clears the specified raw HTTP header
      *
      * @param  string $headerRaw
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function clearRawHeader($headerRaw)
     {
-        if (! count($this->_headersRaw)) {
+        if (! count($this->headersRaw)) {
             return $this;
         }
 
-        $key = array_search($headerRaw, $this->_headersRaw);
+        $key = array_search($headerRaw, $this->headersRaw);
         if ($key !== false) {
-            unset($this->_headersRaw[$key]);
+            unset($this->headersRaw[$key]);
         }
 
         return $this;
@@ -267,7 +237,7 @@ class mini_http_response extends mini_base_component
     /**
      * Clear all headers, normal and raw
      *
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function clearAllHeaders()
     {
@@ -279,7 +249,7 @@ class mini_http_response extends mini_base_component
      * Set HTTP response code to use with headers
      *
      * @param int $code
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function setHttpResponseCode($code)
     {
@@ -288,12 +258,12 @@ class mini_http_response extends mini_base_component
         }
 
         if ((300 <= $code) && (307 >= $code)) {
-            $this->_isRedirect = true;
+            $this->isRedirect = true;
         } else {
-            $this->_isRedirect = false;
+            $this->isRedirect = false;
         }
 
-        $this->_httpResponseCode = $code;
+        $this->httpResponseCode = $code;
         return $this;
     }
 
@@ -304,7 +274,7 @@ class mini_http_response extends mini_base_component
      */
     public function getHttpResponseCode()
     {
-        return $this->_httpResponseCode;
+        return $this->httpResponseCode;
     }
 
     /**
@@ -330,32 +300,32 @@ class mini_http_response extends mini_base_component
      * Sends any headers specified. If an {@link setHttpResponseCode() HTTP response code}
      * has been specified, it is sent with the first header.
      *
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function sendHeaders()
     {
         // Only check if we can send headers if we have headers to send
-        if (count($this->_headersRaw) || count($this->_headers) || (200 != $this->_httpResponseCode)) {
+        if (count($this->headersRaw) || count($this->headers) || (200 != $this->httpResponseCode)) {
             $this->canSendHeaders(true);
-        } elseif (200 == $this->_httpResponseCode) {
+        } elseif (200 == $this->httpResponseCode) {
             // Haven't changed the response code, and we have no headers
             return $this;
         }
 
         $httpCodeSent = false;
 
-        foreach ($this->_headersRaw as $header) {
-            if (!$httpCodeSent && $this->_httpResponseCode) {
-                header($header, true, $this->_httpResponseCode);
+        foreach ($this->headersRaw as $header) {
+            if (!$httpCodeSent && $this->httpResponseCode) {
+                header($header, true, $this->httpResponseCode);
                 $httpCodeSent = true;
             } else {
                 header($header);
             }
         }
 
-        foreach ($this->_headers as $header) {
-            if (!$httpCodeSent && $this->_httpResponseCode) {
-                header($header['name'] . ': ' . $header['value'], $header['replace'], $this->_httpResponseCode);
+        foreach ($this->headers as $header) {
+            if (!$httpCodeSent && $this->httpResponseCode) {
+                header($header['name'] . ': ' . $header['value'], $header['replace'], $this->httpResponseCode);
                 $httpCodeSent = true;
             } else {
                 header($header['name'] . ': ' . $header['value'], $header['replace']);
@@ -363,7 +333,7 @@ class mini_http_response extends mini_base_component
         }
 
         if (!$httpCodeSent) {
-            header('HTTP/1.1 ' . $this->_httpResponseCode);
+            header('HTTP/1.1 ' . $this->httpResponseCode);
             $httpCodeSent = true;
         }
 
@@ -381,14 +351,14 @@ class mini_http_response extends mini_base_component
      *
      * @param string $content
      * @param null|string $name
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function setBody($content, $name = null)
     {
         if ((null === $name) || !is_string($name)) {
-            $this->_body = array('default' => (string) $content);
+            $this->body = array('default' => (string) $content);
         } else {
-            $this->_body[$name] = (string) $content;
+            $this->body[$name] = (string) $content;
         }
         return $this;
     }
@@ -398,18 +368,18 @@ class mini_http_response extends mini_base_component
      *
      * @param string $content
      * @param null|string $name
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function appendBody($content, $name = null)
     {
         if ((null === $name) || !is_string($name)) {
-            if (isset($this->_body['default'])) {
-                $this->_body['default'] .= (string) $content;
+            if (isset($this->body['default'])) {
+                $this->body['default'] .= (string) $content;
             } else {
                 return $this->append('default', $content);
             }
-        } elseif (isset($this->_body[$name])) {
-            $this->_body[$name] .= (string) $content;
+        } elseif (isset($this->body[$name])) {
+            $this->body[$name] .= (string) $content;
         } else {
             return $this->append($name, $content);
         }
@@ -431,15 +401,15 @@ class mini_http_response extends mini_base_component
     {
         if (null !== $name) {
             $name = (string) $name;
-            if (isset($this->_body[$name])) {
-                unset($this->_body[$name]);
+            if (isset($this->body[$name])) {
+                unset($this->body[$name]);
                 return true;
             }
 
             return false;
         }
 
-        $this->_body = array();
+        $this->body = array();
         return true;
     }
 
@@ -461,9 +431,9 @@ class mini_http_response extends mini_base_component
             $this->outputBody();
             return ob_get_clean();
         } elseif (true === $spec) {
-            return $this->_body;
-        } elseif (is_string($spec) && isset($this->_body[$spec])) {
-            return $this->_body[$spec];
+            return $this->body;
+        } elseif (is_string($spec) && isset($this->body[$spec])) {
+            return $this->body[$spec];
         }
 
         return null;
@@ -477,7 +447,7 @@ class mini_http_response extends mini_base_component
      *
      * @param string $name
      * @param string $content
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function append($name, $content)
     {
@@ -485,10 +455,10 @@ class mini_http_response extends mini_base_component
             Exception('Invalid body segment key ("' . gettype($name) . '")');
         }
 
-        if (isset($this->_body[$name])) {
-            unset($this->_body[$name]);
+        if (isset($this->body[$name])) {
+            unset($this->body[$name]);
         }
-        $this->_body[$name] = (string) $content;
+        $this->body[$name] = (string) $content;
         return $this;
     }
 
@@ -508,12 +478,12 @@ class mini_http_response extends mini_base_component
             Exception('Invalid body segment key ("' . gettype($name) . '")');
         }
 
-        if (isset($this->_body[$name])) {
-            unset($this->_body[$name]);
+        if (isset($this->body[$name])) {
+            unset($this->body[$name]);
         }
 
         $new = array($name => (string) $content);
-        $this->_body = $new + $this->_body;
+        $this->body = $new + $this->body;
 
         return $this;
     }
@@ -526,7 +496,7 @@ class mini_http_response extends mini_base_component
      * @param  string $parent
      * @param  boolean $before Whether to insert the new segment before or
      * after the parent. Defaults to false (after)
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function insert($name, $content, $parent = null, $before = false)
     {
@@ -538,16 +508,16 @@ class mini_http_response extends mini_base_component
             Exception('Invalid body segment parent key ("' . gettype($parent) . '")');
         }
 
-        if (isset($this->_body[$name])) {
-            unset($this->_body[$name]);
+        if (isset($this->body[$name])) {
+            unset($this->body[$name]);
         }
 
-        if ((null === $parent) || !isset($this->_body[$parent])) {
+        if ((null === $parent) || !isset($this->body[$parent])) {
             return $this->append($name, $content);
         }
 
         $ins  = array($name => (string) $content);
-        $keys = array_keys($this->_body);
+        $keys = array_keys($this->body);
         $loc  = array_search($parent, $keys);
         if (!$before) {
             // Increment location if not inserting before
@@ -556,15 +526,15 @@ class mini_http_response extends mini_base_component
 
         if (0 === $loc) {
             // If location of key is 0, we're prepending
-            $this->_body = $ins + $this->_body;
-        } elseif ($loc >= (count($this->_body))) {
+            $this->body = $ins + $this->body;
+        } elseif ($loc >= (count($this->body))) {
             // If location of key is maximal, we're appending
-            $this->_body = $this->_body + $ins;
+            $this->body = $this->body + $ins;
         } else {
             // Otherwise, insert at location specified
-            $pre  = array_slice($this->_body, 0, $loc);
-            $post = array_slice($this->_body, $loc);
-            $this->_body = $pre + $ins + $post;
+            $pre  = array_slice($this->body, 0, $loc);
+            $post = array_slice($this->body, $loc);
+            $this->body = $pre + $ins + $post;
         }
 
         return $this;
@@ -577,7 +547,7 @@ class mini_http_response extends mini_base_component
      */
     public function outputBody()
     {
-        $body = implode('', $this->_body);
+        $body = implode('', $this->body);
         echo $body;
     }
 
@@ -585,11 +555,11 @@ class mini_http_response extends mini_base_component
      * Register an exception with the response
      *
      * @param Exception $e
-     * @return Zend_Controller_Response_Abstract
+     * @return mini_http_response
      */
     public function setException(Exception $e)
     {
-        $this->_exceptions[] = $e;
+        $this->exceptions[] = $e;
         return $this;
     }
 
@@ -600,7 +570,7 @@ class mini_http_response extends mini_base_component
      */
     public function getException()
     {
-        return $this->_exceptions;
+        return $this->exceptions;
     }
 
     /**
@@ -610,7 +580,7 @@ class mini_http_response extends mini_base_component
      */
     public function isException()
     {
-        return !empty($this->_exceptions);
+        return !empty($this->exceptions);
     }
 
     /**
@@ -621,7 +591,7 @@ class mini_http_response extends mini_base_component
      */
     public function hasExceptionOfType($type)
     {
-        foreach ($this->_exceptions as $e) {
+        foreach ($this->exceptions as $e) {
             if ($e instanceof $type) {
                 return true;
             }
@@ -638,7 +608,7 @@ class mini_http_response extends mini_base_component
      */
     public function hasExceptionOfMessage($message)
     {
-        foreach ($this->_exceptions as $e) {
+        foreach ($this->exceptions as $e) {
             if ($message == $e->getMessage()) {
                 return true;
             }
@@ -656,7 +626,7 @@ class mini_http_response extends mini_base_component
     public function hasExceptionOfCode($code)
     {
         $code = (int) $code;
-        foreach ($this->_exceptions as $e) {
+        foreach ($this->exceptions as $e) {
             if ($code == $e->getCode()) {
                 return true;
             }
@@ -674,7 +644,7 @@ class mini_http_response extends mini_base_component
     public function getExceptionByType($type)
     {
         $exceptions = array();
-        foreach ($this->_exceptions as $e) {
+        foreach ($this->exceptions as $e) {
             if ($e instanceof $type) {
                 $exceptions[] = $e;
             }
@@ -696,7 +666,7 @@ class mini_http_response extends mini_base_component
     public function getExceptionByMessage($message)
     {
         $exceptions = array();
-        foreach ($this->_exceptions as $e) {
+        foreach ($this->exceptions as $e) {
             if ($message == $e->getMessage()) {
                 $exceptions[] = $e;
             }
@@ -719,7 +689,7 @@ class mini_http_response extends mini_base_component
     {
         $code       = (int) $code;
         $exceptions = array();
-        foreach ($this->_exceptions as $e) {
+        foreach ($this->exceptions as $e) {
             if ($code == $e->getCode()) {
                 $exceptions[] = $e;
             }
@@ -744,10 +714,10 @@ class mini_http_response extends mini_base_component
     public function renderExceptions($flag = null)
     {
         if (null !== $flag) {
-            $this->_renderExceptions = $flag ? true : false;
+            $this->renderExceptions = $flag ? true : false;
         }
 
-        return $this->_renderExceptions;
+        return $this->renderExceptions;
     }
 
     /**

@@ -2,17 +2,32 @@
 class mini_base_event
 {
     
+    /**
+     * 
+     * @var mini_struct_list
+     */
     private $e = null;
+    /**
+     * default dir name
+     * @var string 
+     */
     private $dir = "events";
     public function __construct()
     {
         $this->e = new mini_struct_list();
         $this->getEvents();
     }
+    /**
+     * add event to list
+     * @param string $e
+     */
     public function addEvent($e)
     {
         $this->e->add($e);
     }
+    /**
+     * get event from user config
+     */
     public function getEvents()
     {
       $runPath = mini::getRunPath();
@@ -34,10 +49,19 @@ class mini_base_event
                      $this->e->add(new $class());
                   }
               }
+              else
+              {
+                  mini::e("event file {event} not exists", array('{event}'=>$eventfile));
+              }
           }
       }
      
     }
+    /**
+     * class user define event function
+     * @param string $name
+     * @param array $args
+     */
     public function __call($name,$args)
     {
            foreach($this->e as $k => $e)

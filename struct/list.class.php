@@ -16,7 +16,6 @@ class mini_struct_list implements IteratorAggregate,ArrayAccess,Countable
      * Initializes the list with an array or an iterable object.
      * @param array $data the initial data. Default is null, meaning no initialization.
      * @param boolean $readOnly whether the list is read-only
-     * @throws CException If data is not null and neither an array nor an iterator.
      */
     public function __construct($data=null,$readOnly=false)
     {
@@ -185,7 +184,6 @@ class mini_struct_list implements IteratorAggregate,ArrayAccess,Countable
      * This method is required by the interface ArrayAccess.
      * @param integer $offset the offset to retrieve item.
      * @return mixed the item at the offset
-     * @throws CException if the offset is invalid
      */
     public function offsetGet($offset)
     {

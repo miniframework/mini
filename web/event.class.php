@@ -23,6 +23,10 @@ class mini_web_event
     {
         
     }
+    /**
+     * auto save commit unitofwork
+     * @param array $args
+     */
     public function onautoSave($args)
     {
         mini_db_unitofwork::getHandle()->commit();
