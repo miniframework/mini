@@ -1,37 +1,79 @@
 <?php
 abstract class mini_db_model
 {
+    /**
+     * the active record Object-Relational Mapping
+     * 
+     * @var mini_db_record
+     */
     public $record = null;
+    /**
+     * the table metadata information
+     * 
+     * @var mini_db_schema
+     */
     public $schema = null;
+    /**
+     * build a query criteria, such as conditions, ordering by
+     * 
+     * @var mini_db_condition
+     */
     public $condition = null;
+    /**
+     * model attributes
+     * 
+     * @var array
+     */
     protected $attributes = array();
-    protected $relations = array();
+    /**
+     * whether is auto increment column
+     * 
+     * @var boolean
+     */
     protected $autoIncrement = false;
+    /**
+     * whether is auto save to db
+     * 
+     * @var boolean
+     */
     protected $autoSave = false;
+    /**
+     * model update columns
+     * 
+     * @var array
+     */
     protected $updateColumns = array();
+    /**
+     * whether is model new create
+     * 
+     * @var boolean
+     */
     protected $isInsert = false;
+    /**
+     * whether is model deleted
+     * 
+     * @var boolean
+     */
     protected $isDelete = false;
+    /**
+     * whether is model dirty
+     * 
+     * @var boolean
+     */
     protected $isDirty = false;
+
+    /**
+     * mini_db_model construct
+     * create model metadata info on schema and init record.
+     * whether necessary property set primaryKey version and so on.
+     */
     protected function __construct()
     {
-        
-        // mini_db_model abstract
-        // if(get_class($this) == "mini_db_model")
-        // throw new Exception("mini_db_model __construct is private!");
-        // if($this->autoIncrement == true)
-        // if(is_array($this->primaryKey))
-        // throw new Exception("if autoIncrement , primaryKey must only");
-        // table , columns,primaryKey not empty
         if(empty($this->table) || empty($this->columns) || ! is_array($this->columns) || empty($this->primaryKey))
             mini::e("create model table , columns , primaryKey  not empty");
-            // init record
+        
         $this->record = new mini_db_record($this);
         
-        // if(! is_array($this->primaryKey))
-        // $this->primaryKey = array(
-        // $this->primaryKey
-        // );
-        // init schema
         $this->schema = $this->record->getConnection()->getSchema()->setTable($this->table)->setColumns($this->columns)->primaryKey($this->primaryKey);
         
         $initSelect[] = $this->primaryKey;
@@ -44,49 +86,127 @@ abstract class mini_db_model
             $initSelect[] = "version";
         }
         // init must select colomns
-        $this->condition = new mini_db_condition(array(
-                "select"=>implode("," ,$initSelect) 
-        ));
+        $this->condition = new mini_db_condition(array("select"=>implode("," ,$initSelect)));
         $this->init();
+    
     }
+
+    /**
+     * create a model
+     * 
+     * @param string $class
+     * @return mini_db_model
+     */
     public static function model($class)
     {
         return new $class();
+    
     }
+
+    /**
+     * init model
+     */
     protected function init()
-    {}
+    {
+    }
+
+    /**
+     * get model is autosave
+     * 
+     * @return boolean
+     */
     public function isAutoSave()
     {
         return $this->autoSave;
+    
     }
+
+    /**
+     * get model is dirty
+     * 
+     * @return boolean
+     */
     public function isDirty()
     {
         return $this->isDirty;
+    
     }
+
+    /**
+     * get global only id
+     */
     protected function getGeneratorId()
     {
         return mini_tool_generator::getInstance()->getNextID();
+    
     }
+
+    /**
+     * get is auto increment
+     * 
+     * @return boolean
+     */
     public function isAutoIncrement()
     {
         return $this->autoIncrement;
+    
     }
+
+    /**
+     * is set value in attributes.
+     * 
+     * @param string $name
+     * @return boolean
+     */
     public function __isset($name)
     {
         if(isset($this->attributes[$name]))
             return true;
         else
             return false;
+    
     }
+
+    /**
+     * get model all attributes;
+     * 
+     * @return array
+     */
     public function getAttributes()
     {
         return $this->attributes;
+    
     }
+
+    /**
+     * create a new model
+     * 1.model autoSave=true
+     * if model update,insert,delete, do not call save(), because request end,
+     * model auto flush to db
+     * but must add version columns in table.
+     *
+     * 2.model autoSave=false
+     * if model update,insert, delete must call save() flush to db
+     *
+     * 3.model autoIncrement=true
+     * table primarykey columns must autoincrement.
+     * waring:
+     * autoIncrement=true && autoSave=false
+     * if model->create() must immediately call save(), because model call
+     * __get() must primaykey extist.
+     *
+     * 4.model autoIncrement=false
+     * model primayKey = getGeneratorId(), that generator globally unique id.
+     * from table idgenerator
+     * or Override getGeneratorId method.
+     * 
+     * @param array $data
+     * @return mini_db_model
+     */
     public function create($data = array())
     {
         if($this->isDirty == true)
-             mini::e("model deleted,dirty is true not create model.");
-       // $this->validcreate($data);
+            mini::e("model deleted,dirty is true not create model.");
         
         $this->attributes = $data;
         
@@ -104,7 +224,16 @@ abstract class mini_db_model
                 $this->isInsert = true;
         }
         return $this;
+    
     }
+
+    /**
+     * get model attributes if columns in attributes and not set get attributes
+     * from db.
+     * 
+     * @param string $name
+     * @return string
+     */
     public function __get($name)
     {
         // check primaryKey iswether value
@@ -115,10 +244,7 @@ abstract class mini_db_model
             // get attributes value
         if(isset($this->attributes[$name]))
             return $this->attributes[$name];
-            // get relation model
-        else if(isset($this->relations[$name]))
-            return $this->getRelation($name);
-            // if in columns send select name from table where primaryKey='';
+        
         else if(in_array($name ,$this->columns)) {
             $condition = new mini_db_condition();
             $condition->select = $name;
@@ -126,9 +252,18 @@ abstract class mini_db_model
             $this->record->find($condition);
             return $this->attributes[$name];
         } else {
-            mini::e("class {class} not find {attributes} attributes",array("{class}"=>__CLASS__,"{attributes}"=>$name));
+            mini::e("class {class} not find {attributes} attributes" ,array("{class}"=>__CLASS__,"{attributes}"=>$name));
         }
+    
     }
+
+    /**
+     * According function relations() and scopes() maps return model
+     * 
+     * @param string $name
+     * @param array $argv
+     * @return mini_db_model
+     */
     public function __call($name, $argv)
     {
         $relations = $this->relations();
@@ -140,7 +275,7 @@ abstract class mini_db_model
             $paramnum = count($relations[$name]);
             if($related == 'hasbelong') {
                 $pk = $relations[$name][3];
-                return mini_db_model::model($model)->getByPk($this->$pk, $columns);
+                return mini_db_model::model($model)->getByPk($this->$pk ,$columns);
             } else if($related == 'hasmany') {
                 $method = $relations[$name][3];
                 if(is_array($columns)) {
@@ -151,9 +286,8 @@ abstract class mini_db_model
                 if(isset($argv[0]) && is_array($argv[0])) {
                     $params = array_merge($params ,$argv);
                 }
-                if(empty($method))
-                {
-                     mini::e("model relations hasmany must set {name} method on argv[3]",array('{name}'=>$name));       
+                if(empty($method)) {
+                    mini::e("model relations hasmany must set {name} method on argv[3]" ,array('{name}'=>$name));
                 }
                 return mini_db_model::model($model)->$method($params);
             }
@@ -167,25 +301,46 @@ abstract class mini_db_model
                 return $this->record->find($condition);
             }
         } else {
-            mini::e("class {class} not find method {name} ",array('{class}'=>__CLASS__,'{name}'=>$name));
+            mini::e("class {class} not find method {name} " ,array('{class}'=>__CLASS__,'{name}'=>$name));
         }
+    
     }
+
+    /**
+     * return model relations map
+     * 
+     * @return array
+     */
     public function relations()
     {
         return array();
+    
     }
+
+    /**
+     * return map for select condition
+     * 
+     * @return array
+     */
     public function scopes()
     {
         return array();
+    
     }
+
+    /**
+     * set model attributs and set updateColumns
+     * 
+     * @param array $attr
+     */
     public function setAttr($attr = array())
     {
         
         // if model deleted not set value
         if($this->isDirty == true)
             mini::e("model deleted,dirty is true not get attributes.");
-        
-        // if $name in columns, create update Columns
+            
+            // if $name in columns, create update Columns
         if(! empty($attr))
             foreach($attr as $name => $value) {
                 if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
@@ -193,41 +348,81 @@ abstract class mini_db_model
                 }
                 $this->attributes[$name] = $value;
             }
+    
     }
+
+    /**
+     * set model attributs and set updateColumns
+     * 
+     * @param string $name
+     * @param string $value
+     */
     public function __set($name, $value)
     {
         
         // if model deleted not set value
         if($this->isDirty == true)
             mini::e("model deleted,dirty is true not set attributes.");
-        
-//         $this->validupdate(array(
-//                 $name=>$value 
-//         ));
-        // if $name in columns, create update Columns
+            // if $name in columns, create update Columns
         if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
             $this->updateColumns[$name] = $value;
         }
         $this->attributes[$name] = $value;
+    
     }
+
+    /**
+     * get model by primaryKey
+     * 
+     * @param string $pk
+     * @param array $select
+     * @return mini_db_model
+     */
     public function getByPk($pk, $select = array('*'))
     {
-        if(empty($pk))  mini::e("pk not empty.");
+        if(empty($pk))
+            mini::e("pk not empty.");
         return $this->record->findByPk($pk ,$select);
+    
     }
+
+    /**
+     * get model attributes
+     * 
+     * @param string $name
+     * @return string
+     */
     public function get($name)
     {
         return $this->attributes[$name];
+    
     }
+
+    /**
+     * set model model attributes, but not modify updateColumns
+     * 
+     * @param string $name
+     * @param string $value
+     */
     public function set($name, $value)
     {
         $this->attributes[$name] = $value;
+    
     }
+
+    /**
+     * set model deleted and dirty
+     */
     public function delete()
     {
         $this->isDelete = true;
         $this->isDirty = true;
+    
     }
+
+    /**
+     * build insert sql for model property isinsert
+     */
     public function buildInsert()
     {
         if($this->isDelete != true && $this->isInsert == true) {
@@ -241,7 +436,12 @@ abstract class mini_db_model
                 $this->attributes[$this->primaryKey] = $lastid;
             }
         }
+    
     }
+
+    /**
+     * build delete sql for model property isDelete
+     */
     public function buildDelete()
     {
         if($this->isDelete == true) {
@@ -251,7 +451,12 @@ abstract class mini_db_model
             if($affectnum <= 0)
                 mini::e("version control delete not affect any row");
         }
+    
     }
+
+    /**
+     * build update sql for model property updateColumns
+     */
     public function buildUpdate()
     {
         if($this->isDelete != true && $this->isInsert != true && ! empty($this->updateColumns)) {
@@ -267,39 +472,65 @@ abstract class mini_db_model
             if($affectnum <= 0)
                 mini::e("version control update not affect any row");
         }
+    
     }
+
+    /**
+     * clear model isinsert , updateColumns, isdelete sign
+     */
     public function clear()
     {
         $this->isInsert = false;
         $this->updateColumns = array();
         $this->isDelete = false;
+    
     }
+
+    /**
+     * flush model to db
+     */
     public function save()
     {
         $this->buildInsert();
         $this->buildUpdate();
         $this->buildDelete();
         $this->clear();
+    
     }
+
+    /**
+     * check model is set primarykey
+     */
     public function checkPrimaryKey()
     {
         if(empty($this->attributes[$this->primaryKey]))
             mini::e("use model must first load  primaryKey data to attributes");
+    
     }
+
+    /**
+     * get model table
+     */
     public function getTag()
     {
-        return $this->table;
+        return $this->schema->table;
+    
     }
+
+    /**
+     * get model key create by table_primarykey
+     * 
+     * @param string $key
+     * @return string
+     */
     public function getKey($key = '')
     {
         if(empty($key)) {
             $key = $this->attributes[$this->primaryKey];
         }
-        $mapkey = implode("_" ,array(
-                $this->table,
-                $key 
-        ));
+        $mapkey = implode("_" ,array($this->getTag(),$key));
         return $mapkey;
+    
     }
 }
 ?>
