@@ -1,9 +1,4 @@
 <?php
-/**
- * get config.xml to array.
- * @author wzb
- * @data 2012-05-07  add
- */
 class mini_boot_config
 {
     /**
@@ -25,13 +20,14 @@ class mini_boot_config
      * @var SimpleXMLElement
      */
     private $_data = null;
+
     /**
      * mini mini_boot_config class
      */
     private function __construct($path)
     {
         if(! file_exists($path)) {
-            mini::e("config file {path} not exists!", array('{path}'=>$path));
+            mini::e("config file {path} not exists!" ,array('{path}'=>$path));
         } else {
             $this->path = $path;
             libxml_use_internal_errors(true);
@@ -40,16 +36,17 @@ class mini_boot_config
             if(! $this->config) {
                 $error = libxml_get_errors();
                 libxml_clear_errors();
-                foreach ( $error as $k => $v ) {
+                foreach($error as $k => $v) {
                     $mssage .= "path:" . $path . "\tline:" . $v->line . "\tcolumn" . $v->column . "\tmessage:" . $v->message;
                 }
-                 mini::e("config xml libxml_get_errors: {message} ", array('{message}'=>$mssage));
-            
+                mini::e("config xml libxml_get_errors: {message} " ,array('{message}'=>$mssage));
             }
         }
+    
     }
+
     /**
-     * get mini_boot_loader 
+     * get mini_boot_loader
      *
      * @return mini_boot_config
      */
@@ -59,18 +56,22 @@ class mini_boot_config
             self::$handle = new self($path);
         }
         return self::$handle;
+    
     }
+
     /**
-     * get config xml object 
+     * get config xml object
      *
      * @return SimpleXMLElement
      */
     public function getConfig()
     {
         return $this->config;
+    
     }
+
     /**
-     * get config node magic method 
+     * get config node magic method
      *
      * @param string $name
      * @return array
@@ -78,16 +79,20 @@ class mini_boot_config
     public function __get($name)
     {
         return $this->config[$name];
+    
     }
+
     public function __set($name, $value)
     {
         $this->config[$name] = $value;
+    
     }
+
     /**
      * Convert xml to array
-     * from /Zend/Config/Xml.php , Zend_Config_Xml->_toArray  modify 
+     * from /Zend/Config/Xml.php , Zend_Config_Xml->_toArray modify
      *
-     * @param  SimpleXMLElement $xmlObject
+     * @param SimpleXMLElement $xmlObject
      * @return array
      */
     private function toArray($xmlObject = null)
@@ -97,14 +102,14 @@ class mini_boot_config
         
         // Search for parent node values
         if(count($xmlObject->attributes()) > 0) {
-            foreach ( $xmlObject->attributes() as $key => $value ) {
+            foreach($xmlObject->attributes() as $key => $value) {
                 if($key === 'extends') {
                     continue;
                 }
                 
-                $value = ( string ) $value;
+                $value = (string) $value;
                 
-                if(array_key_exists($key, $config)) {
+                if(array_key_exists($key ,$config)) {
                     if(! is_array($config[$key])) {
                         $config[$key] = array($config[$key]);
                     }
@@ -117,22 +122,22 @@ class mini_boot_config
         }
         
         if(count($xmlObject->children()) > 0) {
-            foreach ( $xmlObject->children() as $key => $value ) {
+            foreach($xmlObject->children() as $key => $value) {
                 if(count($value->children()) > 0) {
                     $value = $this->toArray($value);
                 } else if(count($value->attributes()) > 0) {
                     $attributes = $value->attributes();
                     if(isset($attributes['value'])) {
-                        $value = ( string ) $attributes['value'];
+                        $value = (string) $attributes['value'];
                     } else {
                         $value = $this->toArray($value);
                     }
                 } else {
-                    $value = ( string ) $value;
+                    $value = (string) $value;
                 }
                 
-                if(array_key_exists($key, $config)) {
-                    if(! is_array($config[$key]) || ! array_key_exists(0, $config[$key])) {
+                if(array_key_exists($key ,$config)) {
+                    if(! is_array($config[$key]) || ! array_key_exists(0 ,$config[$key])) {
                         $config[$key] = array($config[$key]);
                     }
                     
@@ -144,9 +149,10 @@ class mini_boot_config
         } else if(! isset($xmlObject['extends']) && ! isset($nsAttributes['extends']) && (count($config) === 0)) {
             // Object has no children nor attributes and doesn't use the extends
             // attribute: it's a string
-            $config = ( string ) $xmlObject;
+            $config = (string) $xmlObject;
         }
         return $config;
+    
     }
 }
 ?>
