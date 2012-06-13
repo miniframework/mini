@@ -1,5 +1,6 @@
 mini code note
-@auther@ 		    inhell
+
+@auther@ 		    @mini
 
 @data@				2012-6-13
 @title@				add code comment and phpdoc comment
