@@ -1,5 +1,9 @@
 mini code note
 @auther@ 		    inhell
+
+@data@				2012-6-13
+@title@				add code comment and phpdoc comment
+
 @data@				2012-6-12
 @title@				add mini exception
 @descript@	
