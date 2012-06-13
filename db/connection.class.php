@@ -1,22 +1,28 @@
 <?php
-/**
- * db wapper for master and slave mysql.
- * @author wzb
- * @date 2012-05-08 add
- *
- */
 class mini_db_connection
 {
+    /**
+     * mini_db_connection handle
+     *
+     * @var array
+     */
     private static $handle = array();
+    /**
+     * dbconfig info array(key,handle)
+     *
+     * @var array
+     */
     private $dbconfig = array();
+
     /**
      * private mini_db_connection construct
-     *
      */
     private function __construct($config = array())
     {
         $this->loadConfig($config = null);
+    
     }
+
     /**
      * get mini_db_connection handle
      *
@@ -28,72 +34,80 @@ class mini_db_connection
             self::$handle = new self($config = array());
         }
         return self::$handle;
+    
     }
+
     /**
      * load db config from config.xml and new mini_db_mysql
-     * @throws if master or slave name not exists , and slave percent add not 100%
+     *
+     * @throws if master or slave name not exists , and slave percent add not
+     * 100%
      */
     private function loadConfig($config = array())
     {
-        //get mini_boot_config from registry
-        //get db config info
+        // get mini_boot_config from registry
+        // get db config info
         if($config == null) {
             $dbconfig = mini::getConfig()->db;
         } else {
             $dbconfig = $config['db'];
         }
         
-        //if db config empty throw exception
+        // if db config empty throw exception
         if(empty($dbconfig)) {
             mini::e("not find mysql config for <db></db>");
         }
         $master = $dbconfig['master']['name'];
-        //if master name empty throw exception
+        // if master name empty throw exception
         if(empty($master)) {
             mini::e("master mysql must input name attr <master name=''></db>");
         }
-        //get db config to dbconfig
-        $this->dbconfig['master'] = array("host" => $dbconfig['master']['host'], "user" => $dbconfig['master']['user'], "pass" => $dbconfig['master']['pass'], "port" => $dbconfig['master']['port'], "dbname" => $dbconfig['master']['dbname'], "charset" => $dbconfig['master']['charset'], "name" => $dbconfig['master']['name']);
-        //get real db handle to dbconfig['handle']
+        // get db config to dbconfig
+        $this->dbconfig['master'] = array("host"=>$dbconfig['master']['host'],"user"=>$dbconfig['master']['user'],"pass"=>$dbconfig['master']['pass'],"port"=>$dbconfig['master']['port'],"dbname"=>$dbconfig['master']['dbname'],"charset"=>$dbconfig['master']['charset'],"name"=>$dbconfig['master']['name']);
+        // get real db handle to dbconfig['handle']
         $this->dbconfig['master']['handle'] = $this->getDbObj($this->dbconfig['master']);
         
-        //start db slave config info 
+        // start db slave config info
         $slave = $dbconfig['slave'];
-        //if key name not exists, maybe only 1 slave
-        if(array_key_exists("name", $slave)) {
+        // if key name not exists, maybe only 1 slave
+        if(array_key_exists("name" ,$slave)) {
             $percent = 100;
-            $this->dbconfig['slave'][0] = array("host" => $dbconfig['slave']['host'], "user" => $dbconfig['slave']['user'], "pass" => $dbconfig['slave']['pass'], "port" => $dbconfig['slave']['port'], "dbname" => $dbconfig['slave']['dbname'], "charset" => $dbconfig['slave']['charset'], "spercent" => 0, "epercent" => $percent, "name" => $dbconfig['slave']['name']);
+            $this->dbconfig['slave'][0] = array("host"=>$dbconfig['slave']['host'],"user"=>$dbconfig['slave']['user'],"pass"=>$dbconfig['slave']['pass'],"port"=>$dbconfig['slave']['port'],"dbname"=>$dbconfig['slave']['dbname'],"charset"=>$dbconfig['slave']['charset'],"spercent"=>0,"epercent"=>$percent,"name"=>$dbconfig['slave']['name']);
             $this->dbconfig['slave'][0]['handle'] = $this->getDbObj($this->dbconfig['slave'][0]);
         } else {
-            //else foreach slave info , get slave info to dbconfig['slave']
-            //percent 0   1: 0-40 , 2:40-60 so percent += config['slave']['percent']
+            // else foreach slave info , get slave info to dbconfig['slave']
+            // percent 0 1: 0-40 , 2:40-60 so percent +=
+            // config['slave']['percent']
             $percent = 0;
-            foreach ( $slave as $key => $value ) {
-                if(! array_key_exists("name", $value)) {
+            foreach($slave as $key => $value) {
+                if(! array_key_exists("name" ,$value)) {
                     mini::e("slave mysql must input name attr <slave name=''></slave>");
                 }
-                $this->dbconfig['slave'][$key] = array("host" => $value['host'], "user" => $value['user'], "pass" => $value['pass'], "port" => $value['port'], "dbname" => $value['dbname'], "charset" => $value['charset'], "spercent" => $percent, "epercent" => $value['percent'] + $percent, "name" => $value['name']);
+                $this->dbconfig['slave'][$key] = array("host"=>$value['host'],"user"=>$value['user'],"pass"=>$value['pass'],"port"=>$value['port'],"dbname"=>$value['dbname'],"charset"=>$value['charset'],"spercent"=>$percent,"epercent"=>$value['percent'] + $percent,"name"=>$value['name']);
                 $this->dbconfig['slave'][$key]['handle'] = $this->getDbObj($this->dbconfig['slave'][$key]);
                 $percent += $value['percent'];
             }
         }
-        //if percent add lt 100 or gt 100  throw exception
+        // if percent add lt 100 or gt 100 throw exception
         if($percent < 100 || $percent > 100) {
             mini::e("slave mysql percent must 100% <percent></percent>");
         }
+    
     }
+
     public function getSchema()
     {
         $dbconfig = $this->dbconfig;
-        switch(1)
-        {
-            case 1:
+        switch (1) {
+            case 1 :
                 $schema = new mini_db_schema();
                 
                 break;
         }
-        return $schema; 
+        return $schema;
+    
     }
+
     /**
      * return db handle for config db driver type
      *
@@ -102,12 +116,11 @@ class mini_db_connection
      */
     public function getDbObj($config)
     {
-        switch( 1)
-        {
+        switch (1) {
             case 1 :
                 $dbObj = new mini_db_mysql($config);
                 
-            break;
+                break;
         }
         if($dbObj instanceof mini_db_interface) {
             return $dbObj;
@@ -116,9 +129,10 @@ class mini_db_connection
         }
     
     }
-    
+
     /**
-     * get handle mini_db_mysql for name (master or other) if other rand (1, 100) from slave
+     * get handle mini_db_mysql for name (master or other) if other rand (1,
+     * 100) from slave
      *
      * @param string $name
      * @return mini_db_mysql
@@ -128,8 +142,8 @@ class mini_db_connection
         if($name == "master") {
             return $this->dbconfig['master']['handle'];
         } else {
-            $r = rand(1, 100);
-            foreach ( $this->dbconfig['slave'] as $key => $value ) {
+            $r = rand(1 ,100);
+            foreach($this->dbconfig['slave'] as $key => $value) {
                 if($r >= $value['spercent'] && $r <= $value['epercent']) {
                     return $value['handle'];
                 }
@@ -137,6 +151,7 @@ class mini_db_connection
         }
     
     }
+
     /**
      * get query from master mini_db_mysql
      *
@@ -148,24 +163,30 @@ class mini_db_connection
         $db = $this->getDbHandle("master");
         $db->query($sql);
         return $db->affected();
+    
     }
+
     public function insert($sql)
     {
         $db = $this->getDbHandle("master");
         $db->query($sql);
         return $db->lastInsertId();
+    
     }
+
     /**
-     * call mini_db_mysql unbuffer_query $obj extends unbuffer interface 
-     * that call  will call  callback() function  
+     * call mini_db_mysql unbuffer_query $obj extends unbuffer interface
+     * that call will call callback() function
      *
      * @param string $sql
      * @param object $obj
      */
     public function unbuffer($sql, $unbuffer)
     {
-        $this->getDbHandle()->unbuffer($sql, $unbuffer);
+        $this->getDbHandle()->unbuffer($sql ,$unbuffer);
+    
     }
+
     /**
      * fetch row if $obj is true return object
      *
@@ -180,7 +201,9 @@ class mini_db_connection
         } else {
             return $this->getDbHandle()->findObj($sql);
         }
+    
     }
+
     /**
      * fetch rows if $obj is true return object array
      *
@@ -195,7 +218,7 @@ class mini_db_connection
         } else {
             return $this->getDbHandle()->findObjAll($sql);
         }
+    
     }
-
 }
 ?>

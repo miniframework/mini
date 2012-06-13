@@ -1,21 +1,4 @@
 <?php
-/**
- * CDbCriteria class file.
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @link http://www.yiiframework.com/
- * @copyright Copyright &copy; 2008-2011 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
-
-/**
- * CDbCriteria represents a query criteria, such as conditions, ordering by, limit/offset.
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CDbCriteria.php 3515 2011-12-28 12:29:24Z mdomba $
- * @package system.db.schema
- * @since 1.0
- */
 class mini_db_condition 
 {
 	const PARAM_PREFIX=':mini';

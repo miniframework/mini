@@ -17,7 +17,10 @@ class mini_log_file extends mini_base_log
 	 * @var string log file name
 	 */
 	private $logFile='application.log';
-
+    /**
+     * get log config from user config file
+     * @param mini_db_config $config
+     */
 	
 	public function logParams($config)
 	{
@@ -33,11 +36,6 @@ class mini_log_file extends mini_base_log
 	    if($this->getLogPath()===null)
 	    	$this->setLogPath(mini::getRunPath()."/logs");
 	}
-	/**
-	 * Initializes the route.
-	 * This method is invoked after the route is created by the route manager.
-	 */
-
 	/**
 	 * @return string directory storing log files. Defaults to application runtime path.
 	 */
