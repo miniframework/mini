@@ -2,6 +2,24 @@ mini code note
 
 @auther@ 		    @mini
 
+@data@				2012-6-14
+@data@				add model validator
+@descript@
+
+					on = create create model use.
+					on = update update model use
+					length = mini_validator_length
+					validtest = model validtest() function
+					public function rules()
+					{
+						return array(
+							array('first_name, last_name, email', 'length', 'on'=>'update', 
+							'max'=>3,'tooLong'=>"{mark}xxxxxx{max}"),
+							array('first_name, last_name, email', 'validtest'),
+						);
+					}
+					model->getErrors();  get errors list.
+
 @data@				2012-6-13
 @title@				add code comment and phpdoc comment
 
