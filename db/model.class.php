@@ -61,7 +61,8 @@ abstract class mini_db_model
      * @var boolean
      */
     protected $isDirty = false;
-
+    private $validators = array();
+    private $errors = array();
     /**
      * mini_db_model construct
      * create model metadata info on schema and init record.
@@ -208,6 +209,8 @@ abstract class mini_db_model
         if($this->isDirty == true)
             mini::e("model deleted,dirty is true not create model.");
         
+        if(!$this->validator($data, "create")) return $this;
+        
         $this->attributes = $data;
         
         if(! $this->autoIncrement) {
@@ -341,13 +344,16 @@ abstract class mini_db_model
             mini::e("model deleted,dirty is true not get attributes.");
             
             // if $name in columns, create update Columns
-        if(! empty($attr))
-            foreach($attr as $name => $value) {
-                if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
-                    $this->updateColumns[$name] = $value;
+        if($this->validator($attr,"update"))
+        {
+            if(! empty($attr))
+                foreach($attr as $name => $value) {
+                    if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
+                        $this->updateColumns[$name] = $value;
+                    }
+                    $this->attributes[$name] = $value;
                 }
-                $this->attributes[$name] = $value;
-            }
+        }
     
     }
 
@@ -363,14 +369,38 @@ abstract class mini_db_model
         // if model deleted not set value
         if($this->isDirty == true)
             mini::e("model deleted,dirty is true not set attributes.");
-            // if $name in columns, create update Columns
-        if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
-            $this->updateColumns[$name] = $value;
+        if($this->validator(array($name=>$value),"update"))
+        {   
+                // if $name in columns, create update Columns
+            if(in_array($name ,$this->columns) && (! isset($this->attributes[$name]) || $value != $this->attributes[$name])) {
+                $this->updateColumns[$name] = $value;
+            }
+            $this->attributes[$name] = $value;
         }
-        $this->attributes[$name] = $value;
     
     }
-
+    public function validator($data, $on)
+    {
+        foreach($this->getValidators() as $validator)
+        {
+            if($validator->applyTo($on))
+        	$validator->validate($this,$data);
+        }
+        return !$this->hasErrors();
+    }
+    public function getValidators()
+    {
+        $validators=new mini_struct_list();
+        foreach($this->rules() as $rule)
+        {
+        	if(isset($rule[0],$rule[1]))  // attributes, validator name
+        		$validators->add(mini_base_validator::createValidator($rule[1],$this,$rule[0],array_slice($rule,2)));
+        	else
+        		mini::e('{class} has an invalid validation rule. The rule must specify attributes to be validated and the validator name.',
+        				array('{class}'=>get_class($this)));
+        }
+        return $validators;
+    }
     /**
      * get model by primaryKey
      * 
@@ -531,6 +561,48 @@ abstract class mini_db_model
         $mapkey = implode("_" ,array($this->getTag(),$key));
         return $mapkey;
     
+    }
+    public function hasErrors($attribute=null)
+    {
+    	if($attribute===null)
+    		return $this->errors!==array();
+    	else
+    		return isset($this->errors[$attribute]);
+    }
+    public function getErrors($attribute=null)
+    {
+    	if($attribute===null)
+    		return $this->errors;
+    	else
+    		return isset($this->errors[$attribute]) ? $this->errors[$attribute] : array();
+    }
+    public function getError($attribute)
+    {
+    	return isset($this->errors[$attribute]) ? reset($this->errors[$attribute]) : null;
+    }
+    public function addError($attribute,$error)
+    {
+    	$this->errors[$attribute][]=$error;
+    }
+    public function addErrors($errors)
+    {
+    	foreach($errors as $attribute=>$error)
+    	{
+    		if(is_array($error))
+    		{
+    			foreach($error as $e)
+    				$this->errors[$attribute][]=$e;
+    		}
+    		else
+    			$this->errors[$attribute][]=$error;
+    	}
+    }
+    public function clearErrors($attribute=null)
+    {
+    	if($attribute===null)
+    		$this->errors=array();
+    	else
+    		unset($this->errors[$attribute]);
     }
 }
 ?>
