@@ -2,8 +2,25 @@ mini code note
 
 @auther@ 		    @mini
 
+@data@				2012-6-17
+@title@				add cache
+@descript@			
+					<cache>
+						<fileCache>
+							<class>mini_cache_file</class>
+							<path></path>
+						</fileCache>
+						<memCache>
+							<class>mini_cache_memcache</cache>
+							<servers>
+								<host></host>
+								<port></port>
+								<weight></weight>
+							</servers>
+					</cache>
+
 @data@				2012-6-14
-@data@				add model validator
+@title@				add model validator
 @descript@
 
 					on = create create model use.
