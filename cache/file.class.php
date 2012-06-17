@@ -35,7 +35,7 @@ class mini_cache_file extends mini_base_cache
     	$expire+=time();
     
     	$cacheFile=$this->getCacheFile($key);
-    	if($this->directoryLevel>0)
+    	if($this->directoryLevel>0 && !file_exists(dirname($cacheFile)))
     		mkdir(dirname($cacheFile),0777,true);
     	if(file_put_contents($cacheFile,$value,LOCK_EX)!==false)
     	{
