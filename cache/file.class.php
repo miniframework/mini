@@ -5,7 +5,7 @@ class mini_cache_file extends mini_base_cache
     public $directoryLevel = 1;
     private $gcProbability = 100;
     private $gced = false;
-    private $cacheFileSuffix = ".bin";
+    private $cacheFileSuffix = ".mini";
 
     public function perinit()
     {
@@ -35,7 +35,7 @@ class mini_cache_file extends mini_base_cache
         }
         
         if($expire <= 0)
-            $expire = 31536000; // 1 year
+            $expire = 31536000; 
         $expire += time();
         
         $cacheFile = $this->getCacheFile($key);
