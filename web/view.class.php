@@ -26,6 +26,7 @@ class mini_web_view extends mini_base_component
      * @var array action pass params to view.
      */
     private $data = array();
+    private $cacheProperties = array();
 
     /**
      * init view
@@ -276,7 +277,36 @@ class mini_web_view extends mini_base_component
         }
     
     }
-
+    private function beginCache($type, $key, $expire = 0, $params = array())
+    {
+        
+        $this->cacheProperties = array("type"=>$type, "key"=>$key, "expire"=>$expire,"params"=>$params);
+        $cache = mini_cache_manager::getHandle();
+        $caching =  $cache->getCache($type);
+        if($content =$caching->get($key))
+        {
+            echo $content;
+            return false;
+        }
+        else 
+        {
+            ob_start();
+            ob_implicit_flush(false);
+            return true;
+        }
+    }
+    private function endCache()
+    {
+        $type = $this->cacheProperties['type'];
+        $key =  $this->cacheProperties['key'];
+        $expire =  $this->cacheProperties['expire'];
+        $this->cacheProperties = array();
+        $cache = mini_cache_manager::getHandle();
+        $caching =  $cache->getCache($type);
+        $content =  ob_get_clean();
+        $caching->set($key, $content, $expire);
+        echo  $content;
+    }
     private function provider($dataProvider, $params = array(), $filter, $columns, $view, $type = 'php')
     {
     }
