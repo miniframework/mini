@@ -68,6 +68,7 @@ class mini_base_application
         $this->initLogger();
         $this->initConfig();
         $this->initPath();
+        $this->initEvent();
     
     }
 
@@ -105,7 +106,7 @@ class mini_base_application
      */
     private function initEvent()
     {
-        $this->getEvents()->addEvent(new mini_web_event());
+        $this->getEvent()->addEvent(new mini_web_event());
     
     }
 

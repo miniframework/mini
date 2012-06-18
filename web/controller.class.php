@@ -94,7 +94,8 @@ class mini_web_controller extends mini_base_component
      * @var parent controller id
      */
     public $parentId = "";
-
+    public $cacheProperties = array();
+    public $cachedata = '';
     /**
      * call controller method action from a request
      * 
@@ -104,11 +105,21 @@ class mini_web_controller extends mini_base_component
     {
         $this->event->onbeforeAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
         $this->doInit();
-        $this->$action();
+        $this->event->onbeginCache(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action),$this);
+        if(!$this->cachedata)
+            $this->$action();
         $this->event->onendAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
         $this->event->onautoSave(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
         if(! $this->cancelRender && ! $this->response->isRedirect()) {
-            $view = $this->render();
+            if(!$this->cachedata)
+            {
+                $view = $this->render();
+                $this->event->onendCache($this, $view);
+            }
+            else
+            {
+                $view = $this->cachedata;
+            }
             $this->response->appendBody($view);
         }
     

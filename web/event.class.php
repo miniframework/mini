@@ -23,6 +23,14 @@ class mini_web_event
     {
         
     }
+    public function onbeginCache($args)
+    {
+        
+    }
+    public function onendCache($args)
+    {
+        
+    }
     /**
      * auto save commit unitofwork
      * @param array $args
