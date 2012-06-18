@@ -1,7 +1,22 @@
 mini code note
 
 @auther@ 		    @mini
-
+@data@				2012-6-17
+@title@				add segment cache action cache
+@descript@	
+					segment:
+					if($view->beginCache())
+					{
+						.......
+						$view->endCache()
+					}
+					action: @modify future , will add new mini_cache_action
+					event->onbeginCache()
+					
+					
+					event->onendCache()
+					
+					
 @data@				2012-6-17
 @title@				add cache
 @descript@			
