@@ -68,7 +68,8 @@ class mini_base_event
            {
                if(method_exists($e, $name))
                {
-                   $e->$name($args);
+                   if($e->$name($args))
+                   { return 1;}
                }
            }
         

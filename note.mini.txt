@@ -1,6 +1,20 @@
 mini code note
 
 @auther@ 		    @mini
+@data@				2012-6-18
+@title@				modify action cache
+@descript@	
+					add class mini_cache_action
+					event:
+						if($args[1]->app,controller,acton =="xxx")
+						{
+							$actionCache->cache("dbCache",  $key, $expire)
+						}
+					doInit:
+						if($this->action == 'hello')
+         				{
+         	 				$this->actionCache->cache("dbCache",'key',3600);
+         				}
 @data@				2012-6-17
 @title@				add segment cache action cache
 @descript@	

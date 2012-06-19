@@ -96,6 +96,7 @@ class mini_web_controller extends mini_base_component
     public $parentId = "";
     public $cacheProperties = array();
     public $cachedata = '';
+    public $actionCache = null;
     /**
      * call controller method action from a request
      * 
@@ -104,23 +105,22 @@ class mini_web_controller extends mini_base_component
     public function run($action)
     {
         $this->event->onbeforeAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
+        $this->actionCache->beginCache($this);
         $this->doInit();
-        $this->event->onbeginCache(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action),$this);
-        if(!$this->cachedata)
+        if(!$this->actionCache->getData())
+        {
             $this->$action();
+        }
         $this->event->onendAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
         $this->event->onautoSave(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
         if(! $this->cancelRender && ! $this->response->isRedirect()) {
-            if(!$this->cachedata)
+            if(!$view = $this->actionCache->getData())
             {
                 $view = $this->render();
-                $this->event->onendCache($this, $view);
+                $this->actionCache->endCache($view);
             }
-            else
-            {
-                $view = $this->cachedata;
-            }
-            $this->response->appendBody($view);
+            if(!$this->parentId)
+                $this->response->appendBody($view);
         }
     
     }
@@ -139,6 +139,7 @@ class mini_web_controller extends mini_base_component
         $this->logger = mini_base_application::app()->getLogger();
         $this->event = mini_base_application::app()->getEvent();
         $this->view = mini::createComponent("mini_web_view");
+        $this->actionCache = new mini_cache_action();
         $this->openRender();
     
     }

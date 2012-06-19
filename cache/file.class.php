@@ -2,7 +2,7 @@
 class mini_cache_file extends mini_base_cache
 {
     public $path = '';
-    public $directoryLevel = 1;
+    public $directoryLevel = 0;
     private $gcProbability = 100;
     private $gced = false;
     private $cacheFileSuffix = ".mini";
