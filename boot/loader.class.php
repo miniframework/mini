@@ -8,7 +8,7 @@ class mini_boot_loader
      */
     private $namespace = array();
     private static $handle = null;
-
+    private $registerCall = array();
     /**
      * mini autoloader class
      */
@@ -38,7 +38,13 @@ class mini_boot_loader
      */
     public function addNamespace($namespace, $path)
     {
-        $this->namespace[$namespace] = $path;
+        if(empty($namespace))
+        {
+            $this->namespace[] = $path;
+        }
+        else {
+            $this->namespace[$namespace] = $path;
+        }
     
     }
 
@@ -48,6 +54,7 @@ class mini_boot_loader
     public function loader($path, $namespace = 'mini')
     {
         $this->namespace[$namespace] = $path;
+        array_unshift($this->registerCall,array($this,"getClass"));
         spl_autoload_register(array($this,"getClass"));
         return $this;
     
@@ -55,9 +62,14 @@ class mini_boot_loader
 
     public function register($callback)
     {
-        spl_autoload_unregister(array($this,"getClass"));
         spl_autoload_register($callback);
-        spl_autoload_register(array($this,'getClass'));
+        if(!empty($this->registerCall))
+            foreach($this->registerCall as $callback)
+            {
+                spl_autoload_unregister($callback);
+                spl_autoload_register($callback);
+            }
+         array_unshift($this->registerCall,$callback);
     
     }
 
@@ -80,6 +92,15 @@ class mini_boot_loader
                     mini::e("class {classname} not find class file {classfile}" ,array('{classname}'=>$classname,'{classfile}'=>$classfile));
                 }
             } else {
+                foreach($this->namespace as $namespace => $path)
+                {
+                    $classfile = $this->getClassfile($classname_arr, 0);
+                    if(file_exists($path . '/' . $classfile)) {
+                    	include_once $path . '/' . $classfile;
+                    	
+                    	return;
+                    } 
+                }
                 mini::e("class {classname} not in namespace!" ,array('{classname}'=>$classname));
             }
         }
@@ -93,14 +114,14 @@ class mini_boot_loader
      * @param array $classname
      * @return string
      */
-    private function getClassfile($classname_arr)
+    private function getClassfile($classname_arr,$root = 1)
     {
         $count = count($classname_arr);
         if($count == 1) {
             return $classname_arr[0] . ".class.php";
         } else {
             $classfile = '';
-            for($i = 1; $i < $count - 1; $i ++) {
+            for($i = $root; $i < $count - 1; $i ++) {
                 $classfile .= $classname_arr[$i] . "/";
             }
             $classfile .= $classname_arr[$count - 1] . ".class.php";

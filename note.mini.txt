@@ -1,6 +1,9 @@
 mini code note
 
 @auther@ 		    @mini
+@data@				2012-6-19
+@title@				add preload,and loadDefautl
+
 @data@				2012-6-18
 @title@				modify action cache
 @descript@	
@@ -8,13 +11,14 @@ mini code note
 					event:
 						if($args[1]->app,controller,acton =="xxx")
 						{
-							$actionCache->cache("dbCache",  $key, $expire)
+							$actionCache->cache("fileCache",  $key, $expire)
 						}
 					doInit:
 						if($this->action == 'hello')
          				{
          	 				$this->actionCache->cache("dbCache",'key',3600);
          				}
+         				
 @data@				2012-6-17
 @title@				add segment cache action cache
 @descript@	

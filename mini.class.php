@@ -58,6 +58,8 @@ class mini
      */
     private function __construct($runPath, $config)
     {
+        
+        $this->perLoad();
         $this->initHandle();
         if(! file_exists($runPath))
             throw new Exception("$runPath not exists!");
@@ -65,9 +67,31 @@ class mini
         self::$loader = $this->initLoader();
         self::$config = $this->initConfig($config);
         self::$event = $this->initEvent();
+        $this->loadDefault();
     
     }
-
+    public function perLoad()
+    {
+        $logPath = MINI_PATH."/log";
+        $basePath = MINI_PATH."/base";
+        $perload = array(
+                $basePath."/component.class.php",
+                $basePath."/log.class.php",
+                $logPath."/manager.class.php",
+                $logPath."/logger.class.php",
+                $logPath."/file.class.php");
+        
+        foreach($perload as $perfile)
+        {
+            include_once $perfile;
+        }
+    }
+    public static function loadDefault()
+    {
+        $modelPath  = self::getRunPath()."/models";
+        self::$loader->addNamespace('',$modelPath);
+        
+    }
     /**
      * loader mini class
      *
@@ -301,15 +325,18 @@ class mini
         $loader = self::$config->loader;
         if(! file_exists($autofile)) {
             $autodirs = $loader['dirs'];
-            if(is_array($autodirs)) {
-                foreach($autodirs as $dir) {
-                    $dirs[] = self::$runPath . '/' . $dir;
+            if(!empty($autodirs))
+            {
+                if(is_array($autodirs)) {
+                    foreach($autodirs as $dir) {
+                        $dirs[] = self::$runPath . '/' . $dir;
+                    }
+                } else if(! empty($autodirs)) {
+                    $dirs[] = self::$runPath . '/' . $autodirs;
                 }
-            } else if(! empty($autodirs)) {
-                $dirs[] = self::$runPath . '/' . $autodirs;
+                $generator = new mini_tool_assembly($autofile ,$dirs);
+                $generator->generate();
             }
-            $generator = new mini_tool_assembly($autofile ,$dirs);
-            $generator->generate();
         }
         if(is_readable($autofile)) {
             include_once $autofile;
