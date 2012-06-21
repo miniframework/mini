@@ -1,6 +1,15 @@
 mini code note
 
 @auther@ 		    @mini
+@data@				2012-6-21
+@title@				add cli shell,and cli model
+@descript@
+					you can: 
+						php minic.php shell runPath
+						>>model show all
+						>>model create all
+						>>model create table
+
 @data@				2012-6-19
 @title@				add preload,and loadDefautl
 

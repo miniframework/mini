@@ -154,18 +154,5 @@ PARAMETERS
 
 EOD;
     }
-    /**
-     * Asks user to confirm by typing y or n.
-     *
-     * @param string $message
-     *            to echo out before waiting for user input
-     * @return bool if user confirmed
-     *        
-     * @since 1.1.9
-     */
-    public function confirm($message)
-    {
-        echo $message . ' [yes|no] ';
-        return ! strncasecmp(trim(fgets(STDIN)) ,'y' ,1);
-    }
+   
 }

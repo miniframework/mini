@@ -3,27 +3,26 @@
  * @author mini
  * @data	
  */
+
+
 /**
  * define app HOME path
  */
 
-@define(HOME, dirname(__FILE__));
-
-/**
- * set config path
- */
-$config = HOME."/config/config.xml";
+defined('RUNPATH') || define('RUNPATH', dirname(__FILE__));
+defined('MINI_EXCEPTION_HANDLER') || define('MINI_EXCEPTION_HANDLER',true);
+defined('MINI_ERROR_HANDLER') || define('MINI_ERROR_HANDLER',true);
+defined('MINI_DEBUG') || define('MINI_DEBUG', true);
 
 /**
  * include php miniframework import file
  */
 $mini = '../mini/mini.class.php';
 include_once $mini;
-
 /**
- * run(HOME): run miniframework
- * boot($config): load env config 
- * web():  start mvc, and web application
+ * set config path
  */
-mini::run(HOME)->boot($config)->web();
+$config = RUNPATH."/config/config.xml";
+
+mini::run(RUNPATH,$config)->assembly(RUNPATH."/config/~autoload.php")->web();
 ?>

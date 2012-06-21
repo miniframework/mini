@@ -33,7 +33,9 @@ class mini_base_event
       $runPath = mini::getRunPath();
       $config = mini::getConfig();
       $eventPath = $runPath."/".$this->dir;
-      $e = $config->event['e'];
+      $event = $config->event;
+      if(empty($event)) return ;
+      $e = $event['e'];
       if(!empty($e))
       {
           if(!is_array($e)) $e = array($e);

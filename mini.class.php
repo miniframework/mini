@@ -14,7 +14,7 @@ defined('MINI_ERROR_HANDLER') || define('MINI_ERROR_HANDLER' ,true);
 /**
  * Defines the debug is opened or closed, defaults to close false.
  */
-defined('MINI_DEBUG') || define('MINI_DEBUG' ,false);
+defined('MINI_DEBUG') || define('MINI_DEBUG' ,true);
 class mini
 {
     /**
@@ -68,6 +68,7 @@ class mini
         self::$config = $this->initConfig($config);
         self::$event = $this->initEvent();
         $this->loadDefault();
+       
     
     }
     public function perLoad()
@@ -286,7 +287,7 @@ class mini
         try {
             $console->run();
         } catch (Exception $e) {
-            self::getLogger()->log($message ,'cli' ,'console')->flush();
+            echo $e->getMessage()."\r\n";
         }
     
     }
