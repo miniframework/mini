@@ -81,7 +81,8 @@ class mini_boot_loader
      */
     private function getClass($classname)
     {
-        if(! class_exists($classname)) {
+        //xhprof show class_exists slow
+      //  if(! class_exists($classname)) {
             $classname_arr = explode("_" ,$classname);
             
             if(array_key_exists($classname_arr[0] ,$this->namespace)) {
@@ -103,7 +104,7 @@ class mini_boot_loader
                 }
                 mini::e("class {classname} not in namespace!" ,array('{classname}'=>$classname));
             }
-        }
+       // }
     
     }
 

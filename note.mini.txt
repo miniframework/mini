@@ -1,6 +1,10 @@
 mini code note
 
 @auther@ 		    @mini
+
+@data@				2012-6-22
+@title@				use facebook xhprof Optimization mini
+
 @data@				2012-6-21
 @title@				add cli shell,and cli model
 @descript@

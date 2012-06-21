@@ -84,7 +84,7 @@ class mini
         
         foreach($perload as $perfile)
         {
-            include_once $perfile;
+            include $perfile;
         }
     }
     public static function loadDefault()
@@ -260,7 +260,6 @@ class mini
     public static function end()
     {
         self::getLogger()->flush();
-        exit();
     
     }
 
