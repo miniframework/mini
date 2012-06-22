@@ -51,6 +51,7 @@ class mini_web_urlmanager extends mini_base_component
             }
     	    else 
                 $this->addRules($router['rules']);
+    	    $this->addRules(array('app'=>'default','class'=>$this->urlrule));
         }
         else 
         {
@@ -91,6 +92,17 @@ class mini_web_urlmanager extends mini_base_component
     
     	}
     	return $this;
+    }
+    public function createUrl($app, $controller, $action, $params=array(),$query=array())
+    {
+        if(array_key_exists($app, $this->rules))
+           return  $this->rules[$app]['class']->createUrl($app, $controller, $action, $params,$query);
+        else
+        {
+           
+            return  $this->rules['default']['class']->createUrl($app, $controller, $action, $params,$query);
+        }
+           
     }
     /**
      * 

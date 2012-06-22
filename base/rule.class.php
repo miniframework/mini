@@ -11,6 +11,6 @@ interface mini_base_rule
     /**
      * create url
      */
-    public function createUrl();
+    public function createUrl($app, $controller, $action, $params=array(),$query=array());
 }
 ?>

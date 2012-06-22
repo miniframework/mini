@@ -5,17 +5,17 @@ class mini_web_dispatch extends mini_base_component
      *
      * @var string default app name
      */
-    private $defaultapp = "site";
+    public $defaultapp = "site";
     /**
      *
      * @var string default controller name
      */
-    private $defaultcontroller = "index";
+    public $defaultcontroller = "index";
     /**
      *
      * @var string default action name
      */
-    private $defaultaction = "index";
+    public $defaultaction = "index";
     /**
      *
      * @var string default error app name
@@ -127,7 +127,6 @@ class mini_web_dispatch extends mini_base_component
         if(! file_exists($classFile)) {
             return null;
         }
-        
         require_once $classFile;
         
         if(! class_exists($className ,false) || ! is_subclass_of($className ,"mini_web_controller")) {

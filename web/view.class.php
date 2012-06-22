@@ -307,6 +307,11 @@ class mini_web_view extends mini_base_component
         $caching->set($key, $content, $expire);
         echo  $content;
     }
+    private function createUrl($app, $controller, $action, $params=array(),$query=array())
+    {
+        return mini_base_application::app()->getUrlManager()->createUrl($app, $controller, $action, $params,$query);
+       
+    }
     private function provider($dataProvider, $params = array(), $filter, $columns, $view, $type = 'php')
     {
     }
