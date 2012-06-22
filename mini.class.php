@@ -323,19 +323,22 @@ class mini
     {
         // set user autoload file
         $loader = self::$config->loader;
-        if(! file_exists($autofile)) {
-            $autodirs = $loader['dirs'];
-            if(!empty($autodirs))
-            {
-                if(is_array($autodirs)) {
-                    foreach($autodirs as $dir) {
-                        $dirs[] = self::$runPath . '/' . $dir;
+        if(!empty($loader))
+        {     
+            if(! file_exists($autofile)) {
+                $autodirs = $loader['dirs'];
+                if(!empty($autodirs))
+                {
+                    if(is_array($autodirs)) {
+                        foreach($autodirs as $dir) {
+                            $dirs[] = self::$runPath . '/' . $dir;
+                        }
+                    } else if(! empty($autodirs)) {
+                        $dirs[] = self::$runPath . '/' . $autodirs;
                     }
-                } else if(! empty($autodirs)) {
-                    $dirs[] = self::$runPath . '/' . $autodirs;
+                    $generator = new mini_tool_assembly($autofile ,$dirs);
+                    $generator->generate();
                 }
-                $generator = new mini_tool_assembly($autofile ,$dirs);
-                $generator->generate();
             }
         }
         if(is_readable($autofile)) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mini>
+<!-- config db -->
 	<db>
 		<driver>mysqli</driver>
 		<master name="master">
@@ -17,41 +18,38 @@
 			<port>3306</port>
 			<dbname>test</dbname>
 			<charset>utf8</charset>
-			<percent>40</percent>
-		</slave>
-		<slave name="slave2">
-			<host>127.0.0.1</host>
-			<user>root</user>
-			<pass></pass>
-			<port>3306</port>
-			<dbname>test</dbname>
-			<charset>utf8</charset>
-			<percent>60</percent>
+			<percent>100</percent>
 		</slave>
 	</db>
+	<!-- 
 	<loader>
-		<dirs>models</dirs>
+		<dirs></dirs>
 	</loader>
-	
+	 -->
+	 <!-- 
 	<router>
 		<rules>
 			<app>admin</app>
 			<class>mini_web_urlrule</class>			
 		</rules>
 	</router>
+	 -->
+	 <!--
 	<event>
 		<e>login</e>
 	</event>
+	-->
 	<default>
-		<app>admin</app>
+		<app>site</app>
 		<controller>index</controller>
-		<action>test</action>
+		<action>index</action>
 	</default>
 	<error>
 		<app>error</app>
 		<controller>index</controller>
 		<action>404</action>
-	</error>	
+	</error>
+	<!-- 
 	<logger>
 		<logs name="mylog">
 			<class>mini_log_file</class>
@@ -60,4 +58,5 @@
 			<file>mylog.log</file>
 		</logs>
 	</logger>
+	-->
 </mini>

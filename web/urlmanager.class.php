@@ -41,14 +41,21 @@ class mini_web_urlmanager extends mini_base_component
     public function process()
     {
         $router = mini_base_application::app()->getConfig()->router;
-        if(!array_key_exists('class', $router['rules']))
+        if(!empty($router))
         {
-	        foreach ( $router['rules'] as $k => $rule ) {
-	            $this->addRules($rule);
-	        }
+            if(!array_key_exists('class', $router['rules']))
+            {
+    	        foreach ( $router['rules'] as $k => $rule ) {
+    	            $this->addRules($rule);
+    	        }
+            }
+    	    else 
+                $this->addRules($router['rules']);
         }
-	    else 
-            $this->addRules($router['rules']);
+        else 
+        {
+            $this->addRules(array('app'=>'default','class'=>$this->urlrule));
+        }
     }
     /**
      * add rule to rules
