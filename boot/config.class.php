@@ -36,7 +36,7 @@ class mini_boot_config
             {
                 mini::e("config not load xml file {file}" ,array('{file}'=>$this->path));
             }
-            $this->config = $this->toArray($xmlobj);
+            $this->config = (array)$this->toArray($xmlobj);
             
             if(! $this->config) {
                 $error = libxml_get_errors();
@@ -84,9 +84,11 @@ class mini_boot_config
     public function __get($name)
     {
         if(isset($this->config[$name]))
-        return $this->config[$name];
+        {
+            return $this->config[$name];
+        }
         else
-            return '';
+            return null;
     }
 
     public function __set($name, $value)

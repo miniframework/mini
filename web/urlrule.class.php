@@ -18,14 +18,22 @@ class mini_web_urlrule extends mini_base_component implements mini_base_rule
     }
     public function createUrl($app, $controller, $action, $params=array(),$query=array())
     {
-        $dispatch = mini_base_application::app()->getDispatch();
-        if ($app != $dispatch->defaultapp) {
+        $config = mini::getConfig();
+        $default = $config->default;
+        if(empty($default))
+        {
+            $dispatch = mini_base_application::app()->getDispatch();
+            $default['app'] = $dispatch->defaultapp;
+            $default['controller'] = $dispatch->defaultcontroller;
+            $default['action'] = $dispatch->defaultaction;
+        }
+        if ($app != $default['app']) {
         	$query_array['app'] = strtolower($app);
         }
-        if ($controller != $dispatch->defaultcontroller) {
+        if ($controller !=  $default['controller']) {
         	$query_array['c'] = strtolower($controller);
         }
-        if ($action != $dispatch->defaultaction) {
+        if ($action !=  $default['action']) {
         	$query_array['a'] = strtolower($action);
         }
         if (! empty($params)) {
