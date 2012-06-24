@@ -212,7 +212,6 @@ abstract class mini_db_model
         if(!$this->validator($data, "create")) return $this;
         
         $this->attributes = $data;
-        
         if(! $this->autoIncrement) {
             // if primaryKey not autoIncrement, get value from getGeneratorId()
             $this->attributes[$this->primaryKey] = $this->getGeneratorId();
@@ -226,6 +225,8 @@ abstract class mini_db_model
                 // if not autoSave set Insert sign = true
                 $this->isInsert = true;
         }
+        
+        mini_db_unitofwork::getHandle()->register($this);
         return $this;
     
     }
@@ -297,7 +298,10 @@ abstract class mini_db_model
         } else if(isset($scopes[$name])) {
             
             $condition = new mini_db_condition($scopes[$name]);
-            $condition->params = $argv[0];
+            if(!empty($argv[0]))
+            {
+                $condition->params = $argv[0];
+            }
             if($scopes[$name]['hasmany'] == true) {
                 return $this->record->findAll($condition);
             } else {

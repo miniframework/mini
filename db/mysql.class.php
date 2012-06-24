@@ -149,6 +149,7 @@ class mini_db_mysql implements mini_db_interface
      */
     public function findAll($sql)
     {
+        $rows = array();
         $query = $this->query($sql);
         while($row = mysql_fetch_assoc($query)) {
             $rows[] = $row;

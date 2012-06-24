@@ -84,7 +84,7 @@ class mini
         
         foreach($perload as $perfile)
         {
-            include $perfile;
+            include_once $perfile;
         }
     }
     public static function loadDefault()

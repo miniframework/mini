@@ -66,7 +66,7 @@ class mini_cli_command_model extends mini_cli_command
         }
         $columns = implode(",", $field);
         $modelClass ="<?php 
-class user extends mini_db_model
+class $table extends mini_db_model
 {
     protected  \$table = '$table';
     protected  \$columns = array($columns);
@@ -77,14 +77,17 @@ class user extends mini_db_model
     // NOTE: you should only define rules for those attributes that
     public function rules()
     {
+        return array();
     }
     // NOTE:array relational rules            
     public function relations()
     {
+        return array();
     }
     // NOTE:user defind select scopes            
     public function scopes()
     {
+        return array();
     }
 }"; 
         $modelPath = mini::getRunPath()."/models";
