@@ -32,7 +32,15 @@ EOD;
         	if(isset($args[0]))
         	{
         	    if(in_array($args[0], $console->commands))
+        	    {
+        	        try {
         	        $console->run($args);
+        	        }
+        	        catch (Exception $e)
+        	        {
+        	           echo  "\r\nERROR:\r\n\t".$e->getMessage();
+        	        }
+        	    }
         	    else
         	               echo <<<EOD
 USAGE
@@ -40,7 +48,8 @@ USAGE
   model show table
   model create all
   model create table
-
+  curd  create model
+  exit
 DESCRIPTION
   This command generates an model at the specified location.
 

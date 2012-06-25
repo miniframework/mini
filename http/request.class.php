@@ -63,7 +63,7 @@ class mini_http_request extends mini_base_component
             case isset($_POST[$key]) :
                 return $_POST[$key];
         }
-        return '';
+        return null;
     
     }
 

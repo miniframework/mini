@@ -120,7 +120,7 @@ class mini_db_builder
         $fields = array();
         $values = array();
         $placeholders = array();
-        $i = 0;
+        $i = 200;
         foreach($data as $name => $value) {
             if(in_array($name ,$schema->getColumns()) && ($value !== null)) {
                 $fields[] = $name;
@@ -153,7 +153,7 @@ class mini_db_builder
     public function deleteCommandByPk($schema, $pk)
     {
         $placeholders = array();
-        $i = 0;
+        $i = 200;
         $placeholders = $schema->primaryKey . '=' . self::PARAM_PREFIX . $i;
         $values[self::PARAM_PREFIX . $i] = $pk;
         $sql = "DELETE FROM {$schema->table}";
@@ -175,7 +175,7 @@ class mini_db_builder
     {
         $fields = array();
         $values = array();
-        $i = 0;
+        $i = 200;
         foreach($data as $name => $value) {
             if(in_array($name ,$schema->getColumns())) {
                 
@@ -213,7 +213,7 @@ class mini_db_builder
     {
         $fields = array();
         $values = array();
-        $i = 0;
+        $i = 200;
         foreach($data as $name => $value) {
             if(in_array($name ,$schema->getColumns())) {
                 

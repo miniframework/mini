@@ -61,7 +61,9 @@ abstract class mini_base_validator
 
     protected function addError($object, $attribute, $message, $params = array())
     {
-        $params['{attribute}'] = $attribute;
+        $tags = $object->tags();
+        if(isset($tags[$attribute]))
+        $params['{attribute}'] = $tags[$attribute];
         $object->addError($attribute ,strtr($message ,$params));
     
     }

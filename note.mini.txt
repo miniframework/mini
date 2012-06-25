@@ -1,6 +1,13 @@
 mini code note
 
 @auther@ 		    @mini
+@data@				2012-6-26
+@title@				add cli curd oper
+@descript@
+					you can: 
+						php minic.php shell runPath
+						>>curd create model
+
 
 @data@				2012-6-22
 @title@				use facebook xhprof Optimization mini

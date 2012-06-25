@@ -1,7 +1,7 @@
 <?php
 class mini_cli_console extends mini_base_component
 {
-    public $commands=array("help","app","model","shell");
+    public $commands=array("help","app","model","curd","shell");
     
     private $scriptName;
     public function init()

@@ -6,6 +6,12 @@ class mini_cli_command_model extends mini_cli_command
     {
        $this->connection = mini_db_connection::getHandle();
        $modelPath = mini::getRunPath()."/models";
+       if(empty($args))
+       {
+          
+           	echo  $this->help();
+           	return;
+       }
        if($args[0] == 'show')
        {  
            if($args[1] == 'all')
@@ -63,8 +69,14 @@ class mini_cli_command_model extends mini_cli_command
             if(!empty($column['Key'])) $primaryKey = $column['Field'];
             if($column['Field'] == 'version') $autoSave = 'true';
             if(!empty($column['Extra'])) $autoIncrement = 'true';
+            if(!empty($column['Comment'])) 
+                $tag = $column['Comment'];
+            else
+                $tag = ucfirst($column['Field']);
+            $tags[] = "\n\t\t'".$column['Field']."'=>'".$tag."'";
         }
         $columns = implode(",", $field);
+        $tags = implode(",",$tags);
         $modelClass ="<?php 
 class $table extends mini_db_model
 {
@@ -87,7 +99,15 @@ class $table extends mini_db_model
     // NOTE:user defind select scopes            
     public function scopes()
     {
-        return array();
+    	return array(
+    			'getAll'=>array(
+    					'hasmany'=>true,
+    			),
+    	);
+    }
+    public function tags()
+    {
+        return array($tags);
     }
 }"; 
         $modelPath = mini::getRunPath()."/models";
@@ -106,7 +126,7 @@ class $table extends mini_db_model
     }
     public function showTableDesc($table)
     {
-    	$rows =  $this->connection->findAll("desc $table");
+    	$rows =  $this->connection->findAll("show full fields from  $table");
     	return $rows;
     }
     public function showTableCreate($table)

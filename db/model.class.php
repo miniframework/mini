@@ -91,7 +91,7 @@ abstract class mini_db_model
         $this->init();
     
     }
-
+     
     /**
      * create a model
      * 
@@ -230,7 +230,31 @@ abstract class mini_db_model
         return $this;
     
     }
-
+    public function setByRequest($request)
+    {
+        foreach($this->columns as $k => $column)
+        {
+        	if($column == $this->primaryKey || $column == 'version')
+        		continue;
+        	if($request->get($column) !=null)
+        	{
+        		$this->$column = $request->get($column);
+        	}
+        }
+    }
+    public function createByRequest($request)
+    {
+        foreach($this->columns as $k => $column)
+        {
+            if($column == $this->primaryKey || $column == 'version')
+                continue;
+            if($request->get($column) !=null)
+            {
+                $row[$column] = $request->get($column);
+            }
+        }
+        return $this->create($row);
+    }
     /**
      * get model attributes if columns in attributes and not set get attributes
      * from db.
@@ -531,7 +555,10 @@ abstract class mini_db_model
         $this->clear();
     
     }
-
+    public function getPrimaryKey()
+    {
+        return $this->primaryKey;
+    }
     /**
      * check model is set primarykey
      */
