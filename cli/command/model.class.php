@@ -119,14 +119,10 @@ class $table extends mini_db_model
     {
         	return <<<EOD
 USAGE
-  help [command-name]
+  model [show|create] [all|table]
         
 DESCRIPTION
-  Display the help information for the specified command.
-  If the command name is not given, all commands will be listed.
-        
-PARAMETERS
- * command-name: optional, the name of the command to show help information.
+  create a model from table.
         
 EOD;
     }

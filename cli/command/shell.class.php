@@ -15,7 +15,7 @@ class mini_cli_command_shell extends mini_cli_command
         
         
         echo <<<EOD
-mini Interactive Tool v1.1 (based on mini v1.0)
+Mini Interactive Tool v1.1 (based on mini v1.0)
 Please type 'help' for help. Type 'exit' to quit.
 EOD;
        $this->runShell();
@@ -31,7 +31,20 @@ EOD;
         	$args =preg_split('/[\s,]+/',rtrim($line,';'),-1,PREG_SPLIT_NO_EMPTY);
         	if(isset($args[0]))
         	{
-        	    $console->run($args);
+        	    if(in_array($args[0], $console->commands))
+        	        $console->run($args);
+        	    else
+        	               echo <<<EOD
+USAGE
+  model show all
+  model show table
+  model create all
+  model create table
+
+DESCRIPTION
+  This command generates an model at the specified location.
+
+EOD;
         	}
         }
     }
@@ -53,7 +66,7 @@ EOD;
 	{
 		return <<<EOD
 USAGE
-  mini shell [config-file]
+  mini shell [run-path]
 
 DESCRIPTION
   This command allows you to interact with a Web application
@@ -65,7 +78,7 @@ DESCRIPTION
   the Web application.
 
 PARAMETERS
- * config-file: optional, the path to
+ * run-path: optional, the path to
    the configuration file for the Web application. 
 
 EOD;

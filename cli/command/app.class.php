@@ -145,7 +145,7 @@ USAGE
   minic app <app-path>
 
 DESCRIPTION
-  This command generates an Yii Web Application at the specified location.
+  This command generates an Mini Web Application at the specified location.
 
 PARAMETERS
  * app-path: required, the directory where the new application will be created.
