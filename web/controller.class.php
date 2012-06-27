@@ -106,7 +106,7 @@ class mini_web_controller extends mini_base_component
     {
         $this->event->onbeforeAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
         $this->actionCache->beginCache($this);
-        $this->doInit();
+        $this->perinit();
         if(!$this->actionCache->getData())
         {
             $this->$action();
@@ -147,7 +147,7 @@ class mini_web_controller extends mini_base_component
     /**
      * action per call method
      */
-    public function doInit()
+    public function perinit()
     {
     }
 

@@ -60,6 +60,7 @@ class mini_cli_command_model extends mini_cli_command
     }
     public function createModel($table)
     {
+        $modelTag = $this->getTableComment($table);
         $rows = $this->showTableDesc($table);
         $autoSave = 'false';
         $autoIncrement = 'false';
@@ -85,7 +86,7 @@ class $table extends mini_db_model
     protected  \$primaryKey = '$primaryKey';
     protected  \$autoSave = $autoSave;
     protected  \$autoIncrement = $autoIncrement;
-
+    public     \$modelTag = '$modelTag';
     // NOTE: you should only define rules for those attributes that
     public function rules()
     {
@@ -100,7 +101,7 @@ class $table extends mini_db_model
     public function scopes()
     {
     	return array(
-    			'getAll'=>array(
+    			'getList'=>array(
     					'hasmany'=>true,
     			),
     	);
@@ -123,6 +124,21 @@ class $table extends mini_db_model
             echo $table.".class.php file create successfull.\r\n";
         }
         
+    }
+    public function getTableComment($table)
+    {
+        $row =  $this->connection->find("show create table  $table");
+        $create = $row['Create Table'];
+        $preg = "/CREATE(?:.*?)\((?:.*?)\)(?:.*?)COMMENT=\'(.*?)\'/ism";
+        if(preg_match($preg, $create, $match))
+        {
+        	$modelTag = $match[1];
+        }
+        else
+        {
+        	$modelTag = ucwords($table);
+        }
+        return $modelTag;
     }
     public function showTableDesc($table)
     {

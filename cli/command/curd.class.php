@@ -1,7 +1,7 @@
 <?php
 class mini_cli_command_curd extends mini_cli_command
 {
-    public $viewName = array("List","addview");
+    public $viewName = array("List","addview","modifyview");
     public function run($args)
     {
         if(isset($args[0]) && $args[0]=='create' )
@@ -41,6 +41,7 @@ class mini_cli_command_curd extends mini_cli_command
                 	    $createview = "create$name";
                 	    $this->$createview($model);
                 	}
+                	$this->addMenu($model);
                 }
             }    
             
@@ -52,9 +53,50 @@ class mini_cli_command_curd extends mini_cli_command
         }
 
     }
+    public function addMenu($model)
+    {
+        $modelName = get_class($model);
+        $viewPath =  mini::getRunPath()."/views/admin/index";
+        $viewFile = "menu.view.php";
+        if(file_exists($viewPath."/".$viewFile))
+        {
+            $menuTag = '<!-- {Mini-Crud-Menu} -->';
+            $menuView = file_get_contents($viewPath."/".$viewFile);
+            $modelMenu = '<li><a href="<?php echo $this->createUrl("admin","'.$modelName.'","list");?>" target="main">'.$model->modelTag.'</a></li>';
+            $modelMenu .= "\r\n".$menuTag;
+            $menuView = str_replace($menuTag, $modelMenu, $menuView);
+            file_put_contents($viewPath."/".$viewFile,$menuView);
+            echo "add model Menu successfull.\r\n";
+        }
+        else
+        {
+            echo "Menu file not exists.\r\n";
+            return;
+        }
+    }
+    public function createmodifyview($model)
+    {
+    	$modelName = get_class($model);
+    	ob_start();
+    	ob_implicit_flush(false);
+    	include dirname(__FILE__)."/view/modifyview.php";
+    	$content = ob_get_clean();
+    
+    	$viewPath =  mini::getRunPath()."/views/admin";
+    	$viewFile = "modifyview.view.php";
+    	$view = $viewPath."/".$modelName."/".$viewFile;
+    	if(file_exists($view))
+    	{
+    		echo "view file: $viewFile exists. delete first.\r\n";
+    		return;
+    	}
+    	 
+    	file_put_contents($view, $content);
+    	echo $viewFile." view create successfull.\r\n";
+    }
     public function createaddview($model)
     {
-    	$modeName = get_class($model);
+    	$modelName = get_class($model);
     	ob_start();
     	ob_implicit_flush(false);
     	include dirname(__FILE__)."/view/addview.php";
@@ -62,10 +104,10 @@ class mini_cli_command_curd extends mini_cli_command
     
     	$viewPath =  mini::getRunPath()."/views/admin";
     	$viewFile = "addview.view.php";
-    	$view = $viewPath."/".$modeName."/".$viewFile;
+    	$view = $viewPath."/".$modelName."/".$viewFile;
     	if(file_exists($view))
     	{
-    		echo "view file: $viewFile exists. delete first.";
+    		echo "view file: $viewFile exists. delete first.\r\n";
     		return;
     	}
     	
@@ -74,7 +116,7 @@ class mini_cli_command_curd extends mini_cli_command
     }
     public function createList($model)
     {
-        $modeName = get_class($model);
+        $modelName = get_class($model);
         ob_start();
         ob_implicit_flush(false);
         include dirname(__FILE__)."/view/list.php";
@@ -82,10 +124,10 @@ class mini_cli_command_curd extends mini_cli_command
         
         $viewPath =  mini::getRunPath()."/views/admin";
         $viewFile = "list.view.php";
-        $view = $viewPath."/".$modeName."/".$viewFile;
+        $view = $viewPath."/".$modelName."/".$viewFile;
     	if(file_exists($view))
     	{
-    		echo "view file: $viewFile exists. delete first.";
+    		echo "view file: $viewFile exists. delete first.\r\n";
     		return;
     	}
     	

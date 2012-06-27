@@ -23,7 +23,7 @@ a{ color:#2366A8; text-decoration:none; }
 <div class="menu">
 	<ul id="leftmenu">
 		<li><a href="<?php echo $this->createUrl("admin","index","main");?>" target="main" class="tabon">首页</a></li>
-		<li><a href="<?php echo $this->createUrl("admin","spider","list");?>" target="main">蜘蛛抓取</a></li>
+		<!-- {Mini-Crud-Menu} -->
 	</ul>
 </div>
 <div class="footer">Powered by Mini <br />&copy; 2001 - 2011 <a href="http://www.github.com/miniframework/" target="_blank">Mini</a> Inc.</div>

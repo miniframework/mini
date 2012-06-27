@@ -154,10 +154,11 @@ class mini_db_builder
     {
         $placeholders = array();
         $i = 200;
-        $placeholders = $schema->primaryKey . '=' . self::PARAM_PREFIX . $i;
+        $placeholders[] = $schema->primaryKey . '=' . self::PARAM_PREFIX . $i;
         $values[self::PARAM_PREFIX . $i] = $pk;
         $sql = "DELETE FROM {$schema->table}";
         $sql = $this->applyCondition($sql ,implode(" and " ,$placeholders));
+        $sql = $this->bindValues($sql ,$values);
         return $sql;
     
     }

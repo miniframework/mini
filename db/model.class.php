@@ -230,8 +230,14 @@ abstract class mini_db_model
         return $this;
     
     }
-    public function setByRequest($request)
+    public function setByRequest($request, $message='')
     {
+        $pk = $request->get($this->getPrimaryKey());
+        $this->getByPk($pk, $message);
+        if($this->hasErrors())
+        {
+            return $this;
+        }
         foreach($this->columns as $k => $column)
         {
         	if($column == $this->primaryKey || $column == 'version')
@@ -241,6 +247,7 @@ abstract class mini_db_model
         		$this->$column = $request->get($column);
         	}
         }
+        return $this;
     }
     public function createByRequest($request)
     {
@@ -436,12 +443,17 @@ abstract class mini_db_model
      * @param array $select
      * @return mini_db_model
      */
-    public function getByPk($pk, $select = array('*'))
+    public function getByPk($pk, $select = array('*'), $message='')
     {
         if(empty($pk))
             mini::e("pk not empty.");
-        return $this->record->findByPk($pk ,$select);
-    
+        $model = $this->record->findByPk($pk ,$select);
+        if($model == null)
+        {
+            if(empty($message)) $message  = $this->modelTag." model not exists.";
+            $this->addError($this->primaryKey, $message);
+        }
+        return $this;
     }
 
     /**
@@ -503,7 +515,6 @@ abstract class mini_db_model
     public function buildDelete()
     {
         if($this->isDelete == true) {
-            $this->isDelete = false;
             $affectnum = $this->record->buildDelete();
             
             if($affectnum <= 0)
@@ -627,6 +638,17 @@ abstract class mini_db_model
     		else
     			$this->errors[$attribute][]=$error;
     	}
+    }
+    public function getFirstError()
+    {
+        foreach($this->errors as $attribute => $error)
+        {
+            if(isset($this->errors[$attribute]))
+            {
+                return  reset($this->errors[$attribute]);
+            }
+           
+        }
     }
     public function clearErrors($attribute=null)
     {

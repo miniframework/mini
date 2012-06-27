@@ -61,7 +61,7 @@ input.txt:hover, input.txt:focus, textarea:hover, textarea:focus{ border-color:#
 	.correct .txt{ padding-right:20px; width:160px; background:url(bg_repno.gif) no-repeat 165px -198px; }
 	.error td{ color:#F60; }
 	.error .txt{ padding-right:20px; width:160px; background:url(bg_repno.gif) no-repeat 167px -346px; }
-.datalist{ clear:both; width:100%; border-top:2px solid #B5CFD9; border-bottom:2px solid #B5CFD9; }
+.datalist{ clear:both; width:100%; border-top:2px solid #B5CFD9;  }
 	.datalist th{ line-height:250%; text-align:left; background:url(bg_repx.gif) repeat-x 0 bottom; color:#9EBECB; font-size:12px; }
 	.datalist td{ padding:5px 0; background:url(bg_repx.gif) repeat-x 0 bottom; }
 	.currenttr td{ background:#F2F9FD url(bg_repx.gif) repeat-x 0 bottom; }
