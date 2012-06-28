@@ -279,7 +279,10 @@ abstract class mini_db_model
             // get attributes value
         if(isset($this->attributes[$name]))
             return $this->attributes[$name];
-        
+        else if(in_array($name ,$this->columns) &&  $this->isInsert==true)
+        {
+            return null;
+        }
         else if(in_array($name ,$this->columns)) {
             $condition = new mini_db_condition();
             $condition->select = $name;
