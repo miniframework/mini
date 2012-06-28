@@ -242,7 +242,7 @@ abstract class mini_db_model
         {
         	if($column == $this->primaryKey || $column == 'version')
         		continue;
-        	if($request->get($column) !=null)
+        	if($request->get($column) !==null)
         	{
         		$this->$column = $request->get($column);
         	}
@@ -255,7 +255,7 @@ abstract class mini_db_model
         {
             if($column == $this->primaryKey || $column == 'version')
                 continue;
-            if($request->get($column) !=null)
+            if($request->get($column) !==null)
             {
                 $row[$column] = $request->get($column);
             }
@@ -448,7 +448,7 @@ abstract class mini_db_model
         if(empty($pk))
             mini::e("pk not empty.");
         $model = $this->record->findByPk($pk ,$select);
-        if($model == null)
+        if($model === null)
         {
             if(empty($message)) $message  = $this->modelTag." model not exists.";
             $this->addError($this->primaryKey, $message);

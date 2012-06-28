@@ -1,7 +1,7 @@
 <?php
 abstract class mini_base_validator
 {
-    public static $builtInValidators = array('email','length');
+    public static $builtInValidators = array('email','length','required');
     public $attributes;
     public $message;
     public $skipOnError = false;

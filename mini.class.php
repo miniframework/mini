@@ -260,6 +260,7 @@ class mini
     public static function end()
     {
         self::getLogger()->flush();
+        exit;
     
     }
 
