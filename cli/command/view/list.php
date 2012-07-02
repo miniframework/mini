@@ -36,6 +36,7 @@
 						<td class="tdpage"></td>
 					</tr>		
 				</table>
+				<p class="page_list"><?php echo $page->pageHtml();?></p>
 		</form>
 	</div>
 </div>

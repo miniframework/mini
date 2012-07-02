@@ -288,7 +288,7 @@ class mini_http_response extends mini_base_component
     {
         $ok = headers_sent($file, $line);
         if ($ok && $throw && $this->headersSentThrowsException) {
-            Exception('Cannot send headers; headers already sent in ' . $file . ', line ' . $line);
+           throw new  Exception('Cannot send headers; headers already sent in ' . $file . ', line ' . $line);
         }
 
         return !$ok;

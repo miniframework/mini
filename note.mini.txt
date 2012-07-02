@@ -1,6 +1,9 @@
 mini code note
 
 @auther@ 		    @mini
+@data@				2012-7-2
+@title@				add page
+
 @data@				2012-6-26
 @title@				add cli curd oper
 @descript@

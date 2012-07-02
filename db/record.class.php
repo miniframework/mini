@@ -168,6 +168,8 @@ class mini_db_record
     public function findAll($condition)
     {
         $condition->mergeWith($this->model->condition);
+        $this->findCount($condition);
+        $this->page($condition);
         $sql = $this->getCommandBuilder()->findCommand($this->model->schema ,$condition);
         $this->flush();
         $rows = $this->getConnection()->findAll($sql);
@@ -175,7 +177,23 @@ class mini_db_record
         return $this->buildAll($rows);
     
     }
-
+    public function page($condition)
+    {
+        if($this->model->getPage() != null)
+        {
+           $page = $this->model->getPage();
+           $page->setCount($this->findCount($condition))->applyLimit($condition);
+        }
+        
+    }
+    public function findCount($condition)
+    {
+        $condition->mergeWith($this->model->condition);
+        $sql = $this->getCommandBuilder()->countCommand($this->model->schema ,$condition);
+        $this->flush();
+        $row = $this->getConnection()->find($sql);
+        return $row['count(*)'];
+    }
     /**
      * get model by sql from db
      * 
@@ -207,6 +225,7 @@ class mini_db_record
     {
         $condition = new mini_db_condition(array("select"=>implode(',' ,$columns)));
         $condition->mergeWith($this->model->condition);
+        $this->page($condition);
         $sql = $this->getCommandBuilder()->findSqlCommand($this->model->schema ,$condition ,$where ,$params);
         $this->flush();
         $row = $this->getConnection()->findAll($sql);

@@ -6,6 +6,7 @@ class mini_tool_curl
     public $encoding = "gzip";
     public $useragent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)";
     public $error = '';
+    public $errorno = 0;
     public $infocode = array();
     public function __construct($params = array())
     {
@@ -29,6 +30,7 @@ class mini_tool_curl
     	$data = curl_exec($ch);
     	if(curl_errno($ch))
     	{
+    	    $this->errorno = curl_errno($ch);
     	    $this->error = "curl_error:".curl_errno($ch)." message:".curl_error($ch);
     	}
     	$this->infocode = curl_getinfo($ch);

@@ -42,9 +42,9 @@ class mini_boot_config
                 $error = libxml_get_errors();
                 libxml_clear_errors();
                 foreach($error as $k => $v) {
-                    $mssage .= "path:" . $path . "\tline:" . $v->line . "\tcolumn" . $v->column . "\tmessage:" . $v->message;
+                    $message .= "path:" . $path . "\tline:" . $v->line . "\tcolumn" . $v->column . "\tmessage:" . $v->message;
                 }
-                mini::e("config xml libxml_get_errors: {message} " ,array('{message}'=>$mssage));
+                mini::e("config xml libxml_get_errors: {message} " ,array('{message}'=>$message));
             }
         }
     

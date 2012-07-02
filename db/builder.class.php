@@ -68,7 +68,23 @@ class mini_db_builder
         return $sql;
     
     }
-
+    public function countCommand($schema, $condition, $alias='t')
+    {
+        if($condition->alias != '') {
+        	$alias = $condition->alias;
+        }
+        $alias = $schema->quoteTableName($alias);
+        $prefix = $alias . '.';
+        $sql = "SELECT count(*) FROM {$schema->getTable()} $alias";
+        $sql = $this->applyJoin($sql ,$condition->join);
+        $sql = $this->applyCondition($sql ,$condition->condition);
+        $sql = $this->applyGroup($sql ,$condition->group);
+        $sql = $this->applyHaving($sql ,$condition->having);
+        $sql = $this->applyOrder($sql ,$condition->order);
+        $sql = $this->applyLimit($sql ,$condition->limit ,$condition->offset);
+        $sql = $this->bindValues($sql ,$condition->params);
+        return $sql;
+    }
     /**
      * create a select sql for a where
      * 

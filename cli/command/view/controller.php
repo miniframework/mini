@@ -8,7 +8,11 @@ class <?php echo $modelName;?>Controller extends mini_web_controller
 	}
 	public function doList()
 	{
-        $models = $this->model('<?php echo $modelName;?>')->getList();
+       
+        $model = $this->model('<?php echo $modelName;?>');
+		$page = $model->page(array("request"=>$this->request, "route"=>$this->route,"url"=>array("admin","<?php echo $modelName;?>","list")));
+		$this->view->page = $page;
+		$models = $model->getList();
 		$this->view->models = $models;
 	}
 	public function doAddview()

@@ -62,6 +62,7 @@ abstract class mini_db_model
      */
     protected $isDirty = false;
     private $validators = array();
+    protected $page = null;
     private $errors = array();
     /**
      * mini_db_model construct
@@ -103,7 +104,15 @@ abstract class mini_db_model
         return new $class();
     
     }
-
+    public function page($params = array())
+    {
+        $this->page = new mini_tool_page($params);
+        return $this->page;
+    }
+    public function getPage()
+    {
+        return $this->page;
+    }
     /**
      * init model
      */
