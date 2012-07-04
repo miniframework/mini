@@ -91,7 +91,8 @@ class mini
     {
         $modelPath  = self::getRunPath()."/models";
         self::$loader->addNamespace('',$modelPath);
-        
+        $servicePath  = self::getRunPath()."/services";
+        self::$loader->addNamespace('',$servicePath);
     }
     /**
      * loader mini class

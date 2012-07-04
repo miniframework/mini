@@ -64,7 +64,7 @@ class mini_tool_page
         $pagecount = $this->getPageCount();
         $current = $this->getCurrentPage();
         $html = "";
-        if($current != 1)
+        if($current != 1 && $pagecount >0)
             $html .= '<a href="' . $this->createUrl($current - 1) . '">上一页</a>';
         if($pagecount <= $this->showpage) {
             for($i = 1; $i <= $pagecount; $i ++) {
@@ -101,7 +101,7 @@ class mini_tool_page
                 $html .= '<a href="' . $this->createUrl($pagecount) . '">' . $pagecount . '</a>';
             }
         }
-        if($current != $pagecount)
+        if($current != $pagecount && $pagecount >0)
             $html .= '<a href="' . $this->createUrl($current + 1) . '">下一页</a>';
         return $html;
     
