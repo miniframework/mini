@@ -31,15 +31,20 @@ class mini_tool_page
         if(empty($url) || ! is_array($url) || $this->route == null) {
             $page_query = $_GET;
             $page_query[$this->pageVar] = $page;
-            
             return $this->pathInfo() . "?" . http_build_query($page_query);
         } else {
-            
             $page = array($this->pageVar=>$page);
             if(isset($url[3]) && is_array($url[3])) {
                 array_merge($page ,$url[3]);
             }
-            return $this->route->createUrl($url[0] ,$url[1] ,$url[2] ,$page);
+            if(!isset($url[4]))
+            {
+                $query = array();
+            } else
+            {
+                $query = $url[4];
+            }
+            return $this->route->createUrl($url[0] ,$url[1] ,$url[2] ,$page, $query);
         }
     
     }

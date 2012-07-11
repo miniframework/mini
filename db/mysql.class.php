@@ -75,14 +75,8 @@ class mini_db_mysql implements mini_db_interface
      */
     public function unbuffer($sql, $unbuffer)
     {
-        if($obj instanceof mini_db_unbuffer) {
-            if($this->link == null) {
-                $this->connect();
-            }
-            $query = mysql_unbuffered_query($sql ,$this->link);
-            if(! $query) {
-                mini::e('mysql query unbuffer error:{error}:{link}:{sql}' ,array('{error}'=>mysql_errno($this->link),'{link}'=>mysql_error($this->link),'{sql}'=>$sql));
-            }
+        if($unbuffer instanceof mini_db_unbuffer) {
+            $query = $this->query($sql);
             while($row = mysql_fetch_assoc($query)) {
                 $unbuffer->callback($row);
             }

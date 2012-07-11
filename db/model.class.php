@@ -219,7 +219,7 @@ abstract class mini_db_model
             mini::e("model deleted,dirty is true not create model.");
         
         if(!$this->validator($data, "create")) return $this;
-        
+        $data['version'] = 1;
         $this->attributes = $data;
         if(! $this->autoIncrement) {
             // if primaryKey not autoIncrement, get value from getGeneratorId()
@@ -512,7 +512,7 @@ abstract class mini_db_model
                 if(isset($this->attributes[$value]))
                     $data[$value] = $this->attributes[$value];
             }
-            $this->isInsert = false;
+          //  $this->isInsert = false;
             $lastid = $this->record->insert($data);
             if($this->autoIncrement && ! $this->autoSave) {
                 $this->attributes[$this->primaryKey] = $lastid;
