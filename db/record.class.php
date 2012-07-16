@@ -126,7 +126,10 @@ class mini_db_record
         if($unitofwork->exists($mapkey)) {
             $model = $unitofwork->get($mapkey);
             if(! $model->isDirty())
+            {
+                $this->model = $model;
                 return $model;
+            }
             else
                 return null;
         } else {
@@ -168,7 +171,6 @@ class mini_db_record
     public function findAll($condition)
     {
         $condition->mergeWith($this->model->condition);
-        $this->findCount($condition);
         $this->page($condition);
         $sql = $this->getCommandBuilder()->findCommand($this->model->schema ,$condition);
         $this->flush();

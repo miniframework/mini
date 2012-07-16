@@ -2,7 +2,7 @@
 class mini_tool_page
 {
     public $conut = 0;
-    public $pagesize = 15;
+    public $pagesize = 16;
     public $currentpage = 0;
     public $pageVar = "page";
     public $request = null;

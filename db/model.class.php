@@ -465,7 +465,7 @@ abstract class mini_db_model
             if(empty($message)) $message  = $this->modelTag." model not exists.";
             $this->addError($this->primaryKey, $message);
         }
-        return $this;
+        return $model;
     }
 
     /**
@@ -546,7 +546,7 @@ abstract class mini_db_model
                     $data[$name] = $value;
             }
             if($this->autoSave) {
-                $data['version'] = $this->attributes['version'] + 1;
+               $data['version'] = $this->attributes['version']= $this->attributes['version'] + 1;
             }
             $this->updateColumns = array();
             $affectnum = $this->record->buildUpdate($data);

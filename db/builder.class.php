@@ -297,6 +297,7 @@ class mini_db_builder
      */
     public function bindValue($sql, $name, $value)
     {
+        $value=addslashes($value);
         return $sql = str_replace($name ,"'" . $value . "'" ,$sql);
     
     }
