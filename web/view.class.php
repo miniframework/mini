@@ -48,7 +48,16 @@ class mini_web_view extends mini_base_component
         $this->data[$key] = $value;
     
     }
-
+    public function helper($name)
+    {
+        $runpath = mini_base_application::app()->getRunPath();
+        $helpPath = $runpath."/views/helper/".$name.".helper.php";
+        if(!file_exists($helpPath))
+            mini::e("helper file {helper} not exists.",array('{helper}'=>$helpPath));
+        include_once $helpPath;
+        $helper =  mini_base_application::app()->getComponent($name."Helper");
+        return $helper;
+    }
     /**
      * get param from data
      *

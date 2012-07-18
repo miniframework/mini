@@ -339,7 +339,6 @@ abstract class mini_db_model
                 return mini_db_model::model($model)->$method($params);
             }
         } else if(isset($scopes[$name])) {
-            
             $condition = new mini_db_condition($scopes[$name]);
             if(!empty($argv[0]))
             {
@@ -347,6 +346,7 @@ abstract class mini_db_model
             }
             if($scopes[$name]['hasmany'] == true) {
                 return $this->record->findAll($condition);
+                
             } else {
                 return $this->record->find($condition);
             }
