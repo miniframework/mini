@@ -70,7 +70,6 @@ class mini_web_urlregex extends mini_base_component implements mini_base_rule
             if((! isset($map['app']) || $app == $map['app']) &&
                  (! isset($map['controller']) || $controller == $map['controller']) &&
                  (! isset($map['action']) || $action == $map['action'])) {
-                
                 if(! empty($rewritekey)) {
                     foreach($rewritekey as $k => $v) {
                         $rewritevalue[$k] = isset($values[$v]) ? $values[$v] : '';
@@ -80,6 +79,7 @@ class mini_web_urlregex extends mini_base_component implements mini_base_rule
                     $uri = $key;
                 }
                 $uri = str_replace('?' ,'' ,$uri);
+                $uri = str_replace('//' ,'/' ,$uri);
                 $querystr = http_build_query($query);
                 if(!empty($query) && !empty($querystr))
                     $uri = $uri."?".$querystr;

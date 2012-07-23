@@ -223,7 +223,7 @@ class mini_db_record
      * @param array $columns
      * @return mini_db_model
      */
-    public function findAllBySql($where, $params, $columns = array('*'))
+    public function findAllBySql($where, $params=array(), $columns = array('*'))
     {
         $condition = new mini_db_condition(array("select"=>implode(',' ,$columns)));
         $condition->mergeWith($this->model->condition);
@@ -269,10 +269,9 @@ class mini_db_record
         $class = get_class($this->model);
         if(! empty($rows)) {
             foreach($rows as $key => $row) {
-                
                 $model = mini_db_model::model($class);
                 foreach($row as $name => $value) {
-                    if(! array_key_exists($name ,$this->model->getAttributes())) {
+                    if(! array_key_exists($name ,$model->getAttributes())) {
                         $model->set($name ,$value);
                     }
                 }
