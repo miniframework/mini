@@ -19,6 +19,7 @@ class mini_tool_curl
     	curl_setopt($ch,CURLOPT_URL, $url);
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     	curl_setopt($ch, CURLOPT_REFERER, $url);
+    	//curl_setopt($ch, CURLOPT_PROXY, "201.12.155.252:80");
     	if (!empty($header)) {
     		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
     	}
