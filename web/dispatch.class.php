@@ -91,15 +91,15 @@ class mini_web_dispatch extends mini_base_component
             $app = $route->getApp();
             $controller = $route->getController();
             $action = $route->getAction();
-            if(empty($app)) {
-                $app = $this->defaultapp;
-            }
-            if(empty($controller)) {
-                $controller = $this->defaultcontroller;
-            }
-            if(empty($action)) {
-                $action = $this->defaultaction;
-            }
+//             if(empty($app)) {
+//                 $app = $this->defaultapp;
+//             }
+//             if(empty($controller)) {
+//                 $controller = $this->defaultcontroller;
+//             }
+//             if(empty($action)) {
+//                 $action = $this->defaultaction;
+//             }
         } else if($type == self::ERROR_TYPE) {
             $app = $this->errorapp;
             $controller = $this->errorcontroller;

@@ -52,7 +52,14 @@ class mini_http_request extends mini_base_component
         return $this->get($key);
     
     }
-
+    public function __isset($key)
+    {
+        $value = $this->get($key);
+        if(isset($value))
+            return true;
+        else
+            return false;
+    }
     public function get($key)
     {
         switch (true) {

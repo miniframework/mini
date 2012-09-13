@@ -242,10 +242,10 @@ abstract class mini_db_model
     public function setByRequest($request, $message='')
     {
         $pk = $request->get($this->getPrimaryKey());
-        $this->getByPk($pk, $message);
-        if($this->hasErrors())
+        $model = $this->getByPk($pk, $message);
+        if($model === null)
         {
-            return $this;
+            return null;
         }
         foreach($this->columns as $k => $column)
         {
@@ -460,12 +460,8 @@ abstract class mini_db_model
         if(empty($pk))
             mini::e("pk not empty.");
         $model = $this->record->findByPk($pk ,$select);
-        if($model === null)
-        {
-            if(empty($message)) $message  = $this->modelTag." model not exists.";
-            $this->addError($this->primaryKey, $message);
-        }
-        return $this;
+      
+        return $model;
     }
 
     /**

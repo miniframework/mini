@@ -22,10 +22,9 @@ class <?php echo $modelName;?>Controller extends mini_web_controller
 	public function doAdd()
 	{
 		$model = $this->model('<?php echo $modelName;?>')->createByRequest($this->request);
-		if($model->hasErrors())
+		if($model === null)
 		{
-			$firsterror = $model->getFirstError();
-			$this->error($firsterror);
+			$this->error("error");
 		}
 		$jumpurl = $this->route->createUrl("admin","<?php echo $modelName;?>", "list");
 		$this->response->setRedirect($jumpurl);
@@ -34,20 +33,18 @@ class <?php echo $modelName;?>Controller extends mini_web_controller
 	{
 		$id = $this->request->get("id");
 		$model = $this->model("<?php echo $modelName;?>")->getByPk($id);
-		if($model->hasErrors())
+		if($model === null)
 		{
-			$firsterror = $model->getFirstError();
-			$this->error($firsterror);
+			$this->error("error");
 		}
 		$this->view->model = $model;
 	}
 	public function doModify()
 	{
 		$model = $this->model("<?php echo $modelName;?>")->setByRequest($this->request);
-		if($model->hasErrors())
+		if($model === null)
 		{
-			$firsterror = $model->getFirstError();
-			$this->error($firsterror);
+			$this->error("error");
 		}
 		$jumpurl = $this->route->createUrl("admin","<?php echo $modelName;?>", "list");
 		$this->response->setRedirect($jumpurl);
@@ -73,16 +70,15 @@ class <?php echo $modelName;?>Controller extends mini_web_controller
 	private function error($message)
 	{
 		
-		$jumpurl = $this->route->createUrl("admin","<?php echo $modelName;?>", "list",array("firsterror"=>$firsterror));
+		$jumpurl = $this->route->createUrl("admin","<?php echo $modelName;?>", "list",array("firsterror"=>$message));
 		$this->jump($jumpurl);
 	}
 	private function delete($pk)
 	{
 		$model = $this->model("<?php echo $modelName;?>")->getByPk($pk);
-		if($model->hasErrors())
+		if($model === null)
 		{
-			$firsterror = $model->getFirstError();
-			$this->error($firsterror);
+			$this->error("error");
 		}
 		$model->delete();
 	}

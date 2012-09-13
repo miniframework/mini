@@ -8,22 +8,68 @@ class mini_tool_curl
     public $error = '';
     public $errorno = 0;
     public $infocode = array();
+    public $retryhistory = 0;
+    public $proxy = '';
+    public $cookiefile = '';
     public function __construct($params = array())
     {
         foreach($params as $key => $param)
             $this->$key = $param;
     }
+    public function getData($url, $header = array(), $retry=3, $ispost=false, $charset='UTF-8', $isdebug=true)
+    {
+    	for($i = 0; $i<=$retry ; $i++)
+    	{
+    	    if(!$ispost)
+    	    {
+    	        $data = $this->get($url, $header);
+    	    } else {
+    	        $data = $this->post($url, $header);
+    	    }
+    	    
+        	if($this->errorno == 28 || $this->error || $this->infocode['http_code'] != '200')
+        	{
+        	    $this->retryhistory = $i;
+        	    if($isdebug)
+        	    echo "<----retry $i.>\r\n";
+        	}
+        	else
+        	{
+        	    break;
+        	}
+    	}
+    
+    	if($this->error || $this->infocode['http_code'] != '200')
+    	{
+    	    if($isdebug)
+			echo "curl get url:$url content error.".$this->error."\r\n";
+    	}
+    	
+    	$content_type = $this->infocode['content_type'];
+		preg_match('/charset=(.*)?/', $content_type, $match);
+		$charset = strtoupper($charset);
+		if(!empty($match[1]) && $match[1] != $charset)
+		{
+		    $data = mb_convert_encoding($data, $charset, $match[1]);
+		}
+    	return $data;
+	}
     public  function get($url, $header=array())
     {
     	$ch = curl_init();
     	curl_setopt($ch,CURLOPT_URL, $url);
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     	curl_setopt($ch, CURLOPT_REFERER, $url);
-    	//curl_setopt($ch, CURLOPT_PROXY, "201.12.155.252:80");
+    	if(!empty($this->proxy)) {
+    	    curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
+    	}
     	if (!empty($header)) {
     		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
     	}
-    	 
+    	if(!empty($this->cookiefile)) {
+    	    curl_setopt($ch, CURLOPT_COOKIEJAR, $this->cookiefile);
+    	    curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookiefile);
+    	}
     	curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
     	curl_setopt($ch, CURLOPT_ENCODING, $this->encoding);
     	curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
@@ -38,15 +84,23 @@ class mini_tool_curl
     	curl_close($ch);
     	return $data;
     }
-    public  function post($url, $post)
+    public  function post($url, $post, $header = array())
     {
     	$ch = curl_init();
     	curl_setopt($ch,CURLOPT_URL, $url);
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     	curl_setopt($ch, CURLOPT_POST, 1);
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+    	
+    	if(!empty($this->proxy)) {
+    		curl_setopt($ch, CURLOPT_PROXY, $this->proxy);
+    	}
     	if (!empty($header)) {
     		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+    	}
+    	if(!empty($this->cookiefile)) {
+    		curl_setopt($ch, CURLOPT_COOKIEJAR, $this->cookiefile);
+    		curl_setopt($ch, CURLOPT_COOKIEFILE, $this->cookiefile);
     	}
     	curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
     	curl_setopt($ch, CURLOPT_ENCODING, $this->encoding);

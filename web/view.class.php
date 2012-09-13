@@ -56,6 +56,7 @@ class mini_web_view extends mini_base_component
             mini::e("helper file {helper} not exists.",array('{helper}'=>$helpPath));
         include_once $helpPath;
         $helper =  mini_base_application::app()->getComponent($name."Helper");
+        $helper->initView($this);
         return $helper;
     }
     /**
@@ -316,7 +317,7 @@ class mini_web_view extends mini_base_component
         $caching->set($key, $content, $expire);
         echo  $content;
     }
-    private function createUrl($app, $controller, $action, $params=array(),$query=array())
+    public function createUrl($app, $controller, $action, $params=array(),$query=array())
     {
         return mini_base_application::app()->getUrlManager()->createUrl($app, $controller, $action, $params,$query);
        
