@@ -181,9 +181,9 @@ class mini_db_connection
      * @param string $sql
      * @param object $obj
      */
-    public function unbuffer($sql, $unbuffer)
+    public function unbuffer($sql, $unbuffer, $callback='')
     {
-        $this->getDbHandle()->unbuffer($sql ,$unbuffer);
+        $this->getDbHandle()->unbuffer($sql ,$unbuffer, $callback);
     
     }
 

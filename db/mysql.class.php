@@ -73,12 +73,17 @@ class mini_db_mysql implements mini_db_interface
      * @param mini_db_unbuffer $unbuffer
      * @throws if $unbuffer not instanceof mini_db_unbuffer
      */
-    public function unbuffer($sql, $unbuffer)
+    public function unbuffer($sql, $unbuffer, $callback='')
     {
         if($unbuffer instanceof mini_db_unbuffer) {
             $query = $this->query($sql);
             while($row = mysql_fetch_assoc($query)) {
-                $unbuffer->callback($row);
+                
+                if(empty($callback)) {
+                    $unbuffer->callback($row);
+                } else {
+                    $unbuffer->$callback($row);
+                }
             }
             $this->free($query);
         } else {

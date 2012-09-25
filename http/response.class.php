@@ -452,7 +452,7 @@ class mini_http_response extends mini_base_component
     public function append($name, $content)
     {
         if (!is_string($name)) {
-            Exception('Invalid body segment key ("' . gettype($name) . '")');
+            throw new Exception('Invalid body segment key ("' . gettype($name) . '")');
         }
 
         if (isset($this->body[$name])) {
@@ -475,7 +475,7 @@ class mini_http_response extends mini_base_component
     public function prepend($name, $content)
     {
         if (!is_string($name)) {
-            Exception('Invalid body segment key ("' . gettype($name) . '")');
+           throw new  Exception('Invalid body segment key ("' . gettype($name) . '")');
         }
 
         if (isset($this->body[$name])) {
@@ -501,11 +501,11 @@ class mini_http_response extends mini_base_component
     public function insert($name, $content, $parent = null, $before = false)
     {
         if (!is_string($name)) {
-            Exception('Invalid body segment key ("' . gettype($name) . '")');
+          throw new   Exception('Invalid body segment key ("' . gettype($name) . '")');
         }
 
         if ((null !== $parent) && !is_string($parent)) {
-            Exception('Invalid body segment parent key ("' . gettype($parent) . '")');
+           throw new  Exception('Invalid body segment parent key ("' . gettype($parent) . '")');
         }
 
         if (isset($this->body[$name])) {

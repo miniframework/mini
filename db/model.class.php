@@ -218,7 +218,7 @@ abstract class mini_db_model
         if($this->isDirty == true)
             mini::e("model deleted,dirty is true not create model.");
         
-        if(!$this->validator($data, "create")) return $this;
+        if(!$this->validator($data, "create")) return null;
         $data['version'] = 1;
         $this->attributes = $data;
         if(! $this->autoIncrement) {
