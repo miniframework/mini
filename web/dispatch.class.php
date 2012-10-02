@@ -76,7 +76,18 @@ class mini_web_dispatch extends mini_base_component
         }
     
     }
-
+    public function getErrorApp()
+    {
+        return $this->errorapp;
+    }
+    public function getErrorController()
+    {
+       return $this->errorcontroller; 
+    }
+    public function getErrorAction()
+    {
+       return $this->erroraction;
+    }
     /**
      * create a controller by request
      * 

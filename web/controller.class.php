@@ -47,6 +47,7 @@ class mini_web_controller extends mini_base_component
      * @var mini_http_response
      */
     public $response = null;
+    public $dispatch = null;
     /**
      *
      * @var mini_web_urlmanager
@@ -104,14 +105,14 @@ class mini_web_controller extends mini_base_component
      */
     public function run($action)
     {
-        $this->event->onbeforeAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
+        $this->event->onbeforeAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action),$this);
         $this->actionCache->beginCache($this);
         $this->perinit();
         if(!$this->actionCache->getData())
         {
             $this->$action();
         }
-        $this->event->onendAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
+        $this->event->onendAction(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action),$this);
         $this->event->onautoSave(array("app"=>$this->app,"controller"=>$this->controller,"action"=>$this->action));
         if(! $this->cancelRender && ! $this->response->isRedirect()) {
             if(!$view = $this->actionCache->getData())
@@ -135,6 +136,7 @@ class mini_web_controller extends mini_base_component
         $this->route = mini_base_application::app()->getUrlManager();
         $this->request = mini_base_application::app()->getRequest();
         $this->response = mini_base_application::app()->getResponse();
+        $this->dispatch = mini_base_application::app()->getDispatch();
         $this->config = mini_base_application::app()->getConfig();
         $this->logger = mini_base_application::app()->getLogger();
         $this->event = mini_base_application::app()->getEvent();
@@ -263,6 +265,11 @@ class mini_web_controller extends mini_base_component
         header("Location: " . $url);
         mini_base_application::app()->end();
     
+    }
+    public function jumperror($params=array(),$query = array())
+    {
+        $url = $this->route->createUrl($this->dispatch->getErrorApp(),$this->dispatch->getErrorController(),$this->dispatch->getErrorAction(),$params, $query);
+        $this->jump($url);
     }
 }
 ?>
