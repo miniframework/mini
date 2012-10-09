@@ -46,7 +46,10 @@ class mini_http_request extends mini_base_component
         $this->params[$key] = $value;
     
     }
-
+    public function set($key, $value)
+    {
+        $this->params[$key] = $value;
+    }
     public function __get($key)
     {
         return $this->get($key);
