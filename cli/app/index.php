@@ -15,10 +15,15 @@ defined('MINI_ERROR_HANDLER') || define('MINI_ERROR_HANDLER',true);
 defined('MINI_DEBUG') || define('MINI_DEBUG', true);
 
 /**
+ * include bootstrap  file
+ */
+include RUNPATH."/config/bootstrap.php";
+
+/**
  * include php miniframework import file
  */
 $mini = '../mini/mini.class.php';
-include_once $mini;
+include $mini;
 /**
  * set config path
  */
