@@ -19,7 +19,7 @@ class mini_db_connection
      */
     private function __construct($config = array())
     {
-        $this->loadConfig($config = null);
+        $this->loadConfig($config);
     
     }
 
@@ -31,7 +31,7 @@ class mini_db_connection
     public static function getHandle($config = array())
     {
         if(self::$handle == null) {
-            self::$handle = new self($config = array());
+            self::$handle = new self($config);
         }
         return self::$handle;
     
