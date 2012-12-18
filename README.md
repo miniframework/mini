@@ -1,4 +1,3 @@
-
 mini framework
 ====
 
@@ -13,7 +12,6 @@ mini framework
          set vhost \<VirtualHost\>\</VirtualHost\>
       
          set host  127.0.0.1 www.test.com
-      
       
       4
          http://www.test.com/?app=site
