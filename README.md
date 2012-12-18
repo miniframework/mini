@@ -4,15 +4,17 @@ mini
 php mini framework
 ====
 
-1  cd mini 
+1.create app
 
-2  php minic.php app ../test
+   1  cd mini 
 
-3  cd /etc/apache/httpd.cnf   
+   2  php minic.php app ../test
 
-   set vhost \<VirtualHost\>\</VirtualHost\>
+   3  cd /etc/apache/httpd.cnf   
+
+      set vhost \<VirtualHost\>\</VirtualHost\>
    
-   set host  127.0.0.1 www.test.com
+      set host  127.0.0.1 www.test.com
    
    
 
