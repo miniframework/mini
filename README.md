@@ -10,7 +10,7 @@ php mini framework
 
 3  cd /etc/apache/httpd.cnf   
 
-   set vhost <VirtualHost></VirtualHost>
+   set vhost \<VirtualHost\>\<\/VirtualHost\>
    
    set host  127.0.0.1 www.test.com
    
