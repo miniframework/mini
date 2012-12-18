@@ -19,7 +19,18 @@ mini framework
          http://www.test.com/?app=admin
 
 
+2.create model
+      
+      1 cp  test/config/config.xml test/config/config_dev.xml
+      2 rm  config.xml
+      2 ln -s config_dev.xml config.xml
+      3 modify config_dev.xml <db></db>
+      4 cd mini
+      5 php minic.php shell ../test
+      
+            >>model create table
+            
+2.create curd             
 
-
-    
+            >>curd create table
 
