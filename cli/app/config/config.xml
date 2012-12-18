@@ -47,7 +47,7 @@
 	<error>
 		<app>error</app>
 		<controller>index</controller>
-		<action>404</action>
+		<action>index</action>
 	</error>
 	<!-- 
 	<logger>
