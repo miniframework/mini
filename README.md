@@ -29,8 +29,12 @@ mini framework
       5 php minic.php shell ../test
       
             >>model create table
+            >>exit
             
-2.create curd             
-
+            ls test/models
+            
+2.create curd    
+   
+     1 php minic.php shell ../test
             >>curd create table
 
