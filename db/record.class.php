@@ -89,7 +89,16 @@ class mini_db_record
         return $model->record->buildAll($rows);
     
     }
-
+    public static function findRow($sql)
+    {
+    	$row = $this->getConnection()->find($sql);
+    	return $row;
+    }
+    public static function findAllRow($sql)
+    {
+    	$rows = $this->getConnection()->findAll($sql);
+    	return $rows;
+    }
     /**
      * flush model update to db
      */
