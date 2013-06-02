@@ -16,7 +16,7 @@ class mini_tool_curl
         foreach($params as $key => $param)
             $this->$key = $param;
     }
-    public function getData($url, $header = array(), $retry=3, $ispost=false, $charset='UTF-8', $isdebug=true)
+    public function getData($url, $header = array(), $retry=3, $ispost=false, $post=array(), $charset='UTF-8', $isdebug=true)
     {
     	for($i = 0; $i<=$retry ; $i++)
     	{
@@ -24,7 +24,7 @@ class mini_tool_curl
     	    {
     	        $data = $this->get($url, $header);
     	    } else {
-    	        $data = $this->post($url, $header);
+    	        $data = $this->post($url,$post, $header);
     	    }
     	    
         	if($this->errorno == 28 || $this->error || $this->infocode['http_code'] != '200')
@@ -54,10 +54,22 @@ class mini_tool_curl
 		}
     	return $data;
 	}
-    public  function get($url, $header=array())
+	public  function getHeader($url,$header=array(),$ispost=false,$post=array())
+	{  
+	    if(!$ispost)
+	    {
+	        $data = $this->get($url, $header,true);
+	    } else {
+	    	$data = $this->post($url, $post, $header,true);
+	    }
+	}
+    public  function get($url, $header=array(),$nobody=false)
     {
     	$ch = curl_init();
+    	
     	curl_setopt($ch,CURLOPT_URL, $url);
+    	if($nobody)
+    		curl_setopt($ch, CURLOPT_NOBODY, 1);
     	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     	curl_setopt($ch, CURLOPT_REFERER, $url);
     	if(!empty($this->proxy)) {
@@ -74,6 +86,7 @@ class mini_tool_curl
     	curl_setopt($ch, CURLOPT_ENCODING, $this->encoding);
     	curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
     	curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent);
+    	
     	$data = curl_exec($ch);
     	if(curl_errno($ch))
     	{
@@ -84,7 +97,7 @@ class mini_tool_curl
     	curl_close($ch);
     	return $data;
     }
-    public  function post($url, $post, $header = array())
+    public  function post($url, $post, $header = array(),$nobody=false)
     {
     	$ch = curl_init();
     	curl_setopt($ch,CURLOPT_URL, $url);
@@ -106,6 +119,8 @@ class mini_tool_curl
     	curl_setopt($ch, CURLOPT_ENCODING, $this->encoding);
     	curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
     	curl_setopt($ch, CURLOPT_USERAGENT, $this->useragent);
+    	if($nobody)
+    		curl_setopt($ch, CURLOPT_NOBODY, 1);
     	$data = curl_exec($ch);
     	if(curl_errno($ch))
     	{

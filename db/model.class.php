@@ -241,12 +241,7 @@ abstract class mini_db_model
     }
     public function setByRequest($request, $message='')
     {
-        $pk = $request->get($this->getPrimaryKey());
-        $model = $this->getByPk($pk, $message);
-        if($model === null)
-        {
-            return null;
-        }
+        $this->checkPrimaryKey();
         foreach($this->columns as $k => $column)
         {
         	if($column == $this->primaryKey || $column == 'version')
@@ -257,6 +252,18 @@ abstract class mini_db_model
         	}
         }
         return $this;
+    }
+    public function updateByRow($row, $message='')
+    {
+        $this->checkPrimaryKey();
+    	foreach($this->columns as $k => $column)
+    	{
+    		if($column == $this->primaryKey || $column == 'version')
+    			continue;
+    		if(isset($row[$column]))
+    		$this->$column = $row[$column];
+    	}
+    	return $this;
     }
     public function createByRequest($request)
     {

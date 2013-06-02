@@ -66,7 +66,7 @@ class mini_cli_command_model extends mini_cli_command
         $autoIncrement = 'false';
         foreach($rows as $k => $column)
         {
-            $field[] = "'".$column['Field']."'";
+            $field[] = "\n\t\t\t\t\t\t\t\t'".$column['Field']."'";
             if(!empty($column['Key'])) $primaryKey = $column['Field'];
             if($column['Field'] == 'version') $autoSave = 'true';
             if(!empty($column['Extra'])) $autoIncrement = 'true';
